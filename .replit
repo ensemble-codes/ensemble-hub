@@ -27,7 +27,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "HARDHAT_TELEMETRY_DISABLED=1 npx hardhat compile && HARDHAT_TELEMETRY_DISABLED=1 npx hardhat test"
+args = "npx hardhat compile && npx hardhat test"
 
 [deployment]
-run = ["sh", "-c", "HARDHAT_TELEMETRY_DISABLED=1 npx hardhat compile && HARDHAT_TELEMETRY_DISABLED=1 npx hardhat test"]
+run = ["sh", "-c", "npx hardhat compile && npx hardhat test"]

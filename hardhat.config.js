@@ -1,5 +1,8 @@
 require("@nomicfoundation/hardhat-toolbox");
 
+// Explicitly disable telemetry
+process.env.HARDHAT_TELEMETRY_DISABLED = "1";
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
     solidity: {
