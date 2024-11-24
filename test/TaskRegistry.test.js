@@ -16,16 +16,34 @@ describe("TaskRegistry", function () {
     it("Should create new task", async function () {
         const tx = await registry.createTask("Test prompt", 0);
         const receipt = await tx.wait();
-        const event = receipt.events.find(e => e.event === 'TaskCreated');
+        const events = receipt.logs.map(log => {
+            try {
+                return registry.interface.parseLog(log);
+            } catch (e) {
+                return null;
+            }
+        }).filter(Boolean);
         
-        expect(event.args.owner).to.equal(owner.address);
-        expect(event.args.task).to.not.equal(ethers.constants.AddressZero);
+        const taskCreatedEvent = events.find(event => event.name === "TaskCreated");
+        expect(taskCreatedEvent).to.not.be.undefined;
+        expect(taskCreatedEvent.args.owner).to.equal(owner.address);
+        expect(taskCreatedEvent.args.task).to.not.equal(ethers.ZeroAddress);
     });
 
     it("Should allow task assignment", async function () {
         const tx = await registry.createTask("Test prompt", 0);
         const receipt = await tx.wait();
-        const taskAddress = receipt.events[0].args.task;
+        const events = receipt.logs.map(log => {
+            try {
+                return registry.interface.parseLog(log);
+            } catch (e) {
+                return null;
+            }
+        }).filter(Boolean);
+        
+        const taskCreatedEvent = events.find(event => event.name === "TaskCreated");
+        expect(taskCreatedEvent).to.not.be.undefined;
+        const taskAddress = taskCreatedEvent.args.task;
 
         await registry.assignAgent(taskAddress, user.address);
         const task = await ethers.getContractAt("Task", taskAddress);

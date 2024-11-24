@@ -16,16 +16,22 @@ contract TaskRegistry is Ownable {
         string memory prompt,
         Task.TaskType taskType
     ) external returns (address) {
-        Task task = new Task(prompt, taskType, msg.sender);
+        // Create task with msg.sender as owner and registry permissions
+        Task task = new Task(prompt, taskType, msg.sender, address(this));
+        address taskAddr = address(task);
         tasksRegistry[msg.sender].push(task);
         
-        emit TaskCreated(msg.sender, address(task));
-        return address(task);
+        emit TaskCreated({
+            owner: msg.sender,
+            task: taskAddr
+        });
+        return taskAddr;
     }
 
     function assignAgent(address taskAddr, address agent) external {
         Task task = Task(taskAddr);
-        require(msg.sender == owner() || msg.sender == task.owner(), "Not authorized");
+        require(msg.sender == task.owner(), "Not authorized");
+        require(task.permissions(address(this)), "Registry not authorized");
         
         task.assignTo(agent);
         emit AgentAssigned(taskAddr, agent);

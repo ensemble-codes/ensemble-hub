@@ -151,8 +151,8 @@
       ]
     },
     "/home/runner/ensemble-ai-agents/contracts/AgentRegistry.sol": {
-      "lastModificationDate": 1732451967967,
-      "contentHash": "410670309f5af09dbe740ebfa80a1d3c",
+      "lastModificationDate": 1732453114796,
+      "contentHash": "3791dbc5813dc325c3d20f5df6834ce9",
       "sourceName": "contracts/AgentRegistry.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -190,8 +190,8 @@
       ]
     },
     "/home/runner/ensemble-ai-agents/contracts/TaskRegistry.sol": {
-      "lastModificationDate": 1732451971739,
-      "contentHash": "ab3843d803ddececa38fce19512a0b30",
+      "lastModificationDate": 1732455607293,
+      "contentHash": "4b3e6245ebf1d30a70efb8fd4c3ad632",
       "sourceName": "contracts/TaskRegistry.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -229,8 +229,8 @@
       ]
     },
     "/home/runner/ensemble-ai-agents/contracts/Task.sol": {
-      "lastModificationDate": 1732451969853,
-      "contentHash": "c3a4ecdb16d1b0796a2cbda9d9726442",
+      "lastModificationDate": 1732455621576,
+      "contentHash": "741496573f8a2fb21d2385ba15b2caa1",
       "sourceName": "contracts/Task.sol",
       "solcConfig": {
         "version": "0.8.20",

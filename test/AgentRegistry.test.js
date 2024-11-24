@@ -20,9 +20,18 @@ describe("AgentRegistry", function () {
             [90, 85]
         );
         const receipt = await tx.wait();
-        const event = receipt.events.find(e => e.event === 'AgentRegistered');
+        const events = receipt.logs.map(log => {
+            try {
+                return registry.interface.parseLog(log);
+            } catch (e) {
+                return null;
+            }
+        }).filter(Boolean);
         
-        expect(event.args.model).to.equal("GPT-4");
-        expect(await registry.isRegistered(event.args.agent)).to.be.true;
+        const agentRegisteredEvent = events.find(event => event.name === "AgentRegistered");
+        expect(agentRegisteredEvent).to.not.be.undefined;
+        expect(agentRegisteredEvent.args.agent).to.not.equal(ethers.ZeroAddress);
+        expect(agentRegisteredEvent.args.model).to.equal("GPT-4");
+        expect(await registry.isRegistered(agentRegisteredEvent.args.agent)).to.be.true;
     });
 });

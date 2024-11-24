@@ -18,11 +18,15 @@ contract AgentRegistry is Ownable {
         uint256[] memory skillLevels
     ) external returns (address) {
         Agent agent = new Agent(model, prompt, skillNames, skillLevels);
+        address agentAddr = address(agent);
         agent.transferOwnership(msg.sender);
-        agentRegistry[address(agent)] = agent;
+        agentRegistry[agentAddr] = agent;
         
-        emit AgentRegistered(address(agent), model);
-        return address(agent);
+        emit AgentRegistered({
+            agent: agentAddr,
+            model: model
+        });
+        return agentAddr;
     }
 
     function isRegistered(address agent) external view returns (bool) {

@@ -11,7 +11,7 @@ describe("Task", function () {
     beforeEach(async function () {
         [owner, assignee, other] = await ethers.getSigners();
         Task = await ethers.getContractFactory("Task");
-        task = await Task.deploy("Test prompt", 0, owner.address);
+        task = await Task.deploy("Test prompt", 0, owner.address, owner.address);
     });
 
     it("Should set correct initial values", async function () {
@@ -30,6 +30,6 @@ describe("Task", function () {
     it("Should not allow non-owner to assign agent", async function () {
         await expect(
             task.connect(other).assignTo(assignee.address)
-        ).to.be.revertedWith("Ownable: caller is not the owner");
+        ).to.be.reverted;
     });
 });

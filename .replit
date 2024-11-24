@@ -27,7 +27,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo 'n' | npx hardhat test"
+args = "npx hardhat test"
 
 [deployment]
-run = ["sh", "-c", "echo 'n' | npx hardhat test"]
+run = ["sh", "-c", "npx hardhat test"]

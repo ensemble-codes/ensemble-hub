@@ -15,12 +15,13 @@ contract Task is ITask, Ownable, ReentrancyGuard {
     constructor(
         string memory _prompt,
         TaskType _type,
-        address _owner
+        address _owner,
+        address _registry
     ) Ownable(_owner) ReentrancyGuard() {
         prompt = _prompt;
         taskType = _type;
         status = TaskStatus.CREATED;
-        _transferOwnership(_owner);
+        permissions[_registry] = true; // Set registry permissions during construction
     }
 
     modifier onlyAssignee() {
@@ -38,7 +39,8 @@ contract Task is ITask, Ownable, ReentrancyGuard {
         emit TaskStatusChanged(uint256(uint160(address(this))), status);
     }
 
-    function assignTo(address _assignee) external onlyOwner inStatus(TaskStatus.CREATED) {
+    function assignTo(address _assignee) external inStatus(TaskStatus.CREATED) {
+        require(msg.sender == owner() || permissions[msg.sender], "Not authorized");
         assignee = _assignee;
         status = TaskStatus.ASSIGNED;
         emit TaskAssigned(uint256(uint160(address(this))), _assignee);
