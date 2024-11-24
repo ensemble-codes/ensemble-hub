@@ -15,7 +15,6 @@ describe("Agent", function () {
             ["coding", "writing"],
             [90, 85]
         );
-        await agent.deployed();
     });
 
     it("Should set correct initial values", async function () {

@@ -12,7 +12,6 @@ describe("Task", function () {
         [owner, assignee, other] = await ethers.getSigners();
         Task = await ethers.getContractFactory("Task");
         task = await Task.deploy("Test prompt", 0, owner.address);
-        await task.deployed();
     });
 
     it("Should set correct initial values", async function () {

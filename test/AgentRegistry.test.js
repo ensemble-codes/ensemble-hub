@@ -10,7 +10,6 @@ describe("AgentRegistry", function () {
         [owner] = await ethers.getSigners();
         AgentRegistry = await ethers.getContractFactory("AgentRegistry");
         registry = await AgentRegistry.deploy();
-        await registry.deployed();
     });
 
     it("Should register new agent", async function () {

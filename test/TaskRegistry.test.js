@@ -11,7 +11,6 @@ describe("TaskRegistry", function () {
         [owner, user] = await ethers.getSigners();
         TaskRegistry = await ethers.getContractFactory("TaskRegistry");
         registry = await TaskRegistry.deploy();
-        await registry.deployed();
     });
 
     it("Should create new task", async function () {
