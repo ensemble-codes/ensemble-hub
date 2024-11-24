@@ -15,6 +15,10 @@ author = "agent"
 task = "workflow.run"
 args = "Hardhat Tests"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SDK Build"
+
 [[workflows.workflow]]
 name = "Hardhat Tests"
 author = "agent"
@@ -28,6 +32,20 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd packages/contracts && npx hardhat test"
+
+[[workflows.workflow]]
+name = "SDK Build"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd packages/sdk && npm run build"
 
 [deployment]
 run = ["sh", "-c", "cd packages/contracts && npx hardhat test"]
