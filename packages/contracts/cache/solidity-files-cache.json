@@ -1,81 +1,6 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/home/runner/ensemble-ai-agents/contracts/Agent.sol": {
-      "lastModificationDate": 1732451966074,
-      "contentHash": "373502624ffa148d91bee52c2be6c185",
-      "sourceName": "contracts/Agent.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./interfaces/IAgent.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.19"
-      ],
-      "artifacts": [
-        "Agent"
-      ]
-    },
-    "/home/runner/ensemble-ai-agents/contracts/interfaces/IAgent.sol": {
-      "lastModificationDate": 1732398047410,
-      "contentHash": "1928b38925d1448d6bf871e3266b0513",
-      "sourceName": "contracts/interfaces/IAgent.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IAgent"
-      ]
-    },
     "/home/runner/ensemble-ai-agents/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
       "lastModificationDate": 1732397751530,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
@@ -150,8 +75,119 @@
         "Context"
       ]
     },
-    "/home/runner/ensemble-ai-agents/contracts/AgentRegistry.sol": {
-      "lastModificationDate": 1732453114796,
+    "/home/runner/ensemble-ai-agents/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+      "lastModificationDate": 1732397751551,
+      "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
+      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
+    },
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/Agent.sol": {
+      "lastModificationDate": 1732479471503,
+      "contentHash": "373502624ffa148d91bee52c2be6c185",
+      "sourceName": "contracts/Agent.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "./interfaces/IAgent.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "Agent"
+      ]
+    },
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/interfaces/IAgent.sol": {
+      "lastModificationDate": 1732398047410,
+      "contentHash": "1928b38925d1448d6bf871e3266b0513",
+      "sourceName": "contracts/interfaces/IAgent.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IAgent"
+      ]
+    },
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/AgentRegistry.sol": {
+      "lastModificationDate": 1732479471503,
       "contentHash": "3791dbc5813dc325c3d20f5df6834ce9",
       "sourceName": "contracts/AgentRegistry.sol",
       "solcConfig": {
@@ -189,8 +225,8 @@
         "AgentRegistry"
       ]
     },
-    "/home/runner/ensemble-ai-agents/contracts/TaskRegistry.sol": {
-      "lastModificationDate": 1732455607293,
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/TaskRegistry.sol": {
+      "lastModificationDate": 1732479471504,
       "contentHash": "4b3e6245ebf1d30a70efb8fd4c3ad632",
       "sourceName": "contracts/TaskRegistry.sol",
       "solcConfig": {
@@ -228,8 +264,8 @@
         "TaskRegistry"
       ]
     },
-    "/home/runner/ensemble-ai-agents/contracts/Task.sol": {
-      "lastModificationDate": 1732455621576,
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/Task.sol": {
+      "lastModificationDate": 1732479471504,
       "contentHash": "741496573f8a2fb21d2385ba15b2caa1",
       "sourceName": "contracts/Task.sol",
       "solcConfig": {
@@ -268,7 +304,7 @@
         "Task"
       ]
     },
-    "/home/runner/ensemble-ai-agents/contracts/interfaces/ITask.sol": {
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/interfaces/ITask.sol": {
       "lastModificationDate": 1732398046370,
       "contentHash": "dd422b4eb5adf4b34c682bd4b9f57e5f",
       "sourceName": "contracts/interfaces/ITask.sol",
@@ -302,42 +338,6 @@
       ],
       "artifacts": [
         "ITask"
-      ]
-    },
-    "/home/runner/ensemble-ai-agents/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
-      "lastModificationDate": 1732397751551,
-      "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
-      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "ReentrancyGuard"
       ]
     }
   }
