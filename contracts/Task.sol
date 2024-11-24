@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./interfaces/ITask.sol";
 
 contract Task is ITask, Ownable, ReentrancyGuard {
@@ -16,7 +16,7 @@ contract Task is ITask, Ownable, ReentrancyGuard {
         string memory _prompt,
         TaskType _type,
         address _owner
-    ) {
+    ) Ownable(_owner) ReentrancyGuard() {
         prompt = _prompt;
         taskType = _type;
         status = TaskStatus.CREATED;

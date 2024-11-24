@@ -6,6 +6,8 @@ import "./Agent.sol";
 
 contract AgentRegistry is Ownable {
     mapping(address => Agent) public agentRegistry;
+
+    constructor() Ownable(msg.sender) {}
     
     event AgentRegistered(address indexed agent, string model);
 

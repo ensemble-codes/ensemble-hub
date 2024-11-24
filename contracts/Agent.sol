@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IAgent.sol";
@@ -15,7 +15,7 @@ contract Agent is IAgent, Ownable {
         string memory _prompt,
         string[] memory _skillNames,
         uint256[] memory _skillLevels
-    ) {
+    ) Ownable(msg.sender) {
         require(_skillNames.length == _skillLevels.length, "Skills mismatch");
         
         model = _model;

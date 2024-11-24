@@ -7,6 +7,8 @@ import "./Task.sol";
 contract TaskRegistry is Ownable {
     mapping(address => Task[]) public tasksRegistry;
     
+    constructor() Ownable(msg.sender) {}
+    
     event TaskCreated(address indexed owner, address task);
     event AgentAssigned(address indexed task, address indexed agent);
 
