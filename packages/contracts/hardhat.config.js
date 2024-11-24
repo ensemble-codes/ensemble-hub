@@ -17,6 +17,14 @@ module.exports = {
     networks: {
         hardhat: {
             chainId: 1337
+        },
+        base: {
+            url: "https://mainnet.base.org",
+            chainId: 8453,
+        },
+        baseSepolia: {
+            url: "https://sepolia.base.org",
+            chainId: 84532,
         }
     },
     paths: {

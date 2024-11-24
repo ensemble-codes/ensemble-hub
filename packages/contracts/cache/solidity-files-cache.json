@@ -187,8 +187,8 @@
       ]
     },
     "/home/runner/ensemble-ai-agents/packages/contracts/contracts/AgentRegistry.sol": {
-      "lastModificationDate": 1732479471503,
-      "contentHash": "3791dbc5813dc325c3d20f5df6834ce9",
+      "lastModificationDate": 1732484446365,
+      "contentHash": "f901f09cb70a14db1eb59c6e49a622f8",
       "sourceName": "contracts/AgentRegistry.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -216,7 +216,7 @@
       },
       "imports": [
         "@openzeppelin/contracts/access/Ownable.sol",
-        "./Agent.sol"
+        "./interfaces/IAgent.sol"
       ],
       "versionPragmas": [
         "^0.8.20"

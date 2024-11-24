@@ -2,10 +2,18 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Agent.sol";
+import "./interfaces/IAgent.sol";
 
-contract AgentRegistry is Ownable {
-    mapping(address => Agent) public agentRegistry;
+contract AgentRegistry is IAgent, Ownable {
+    struct AgentData {
+        string model;
+        string prompt;
+        Skill[] skills;
+        uint256 reputation;
+        bool isRegistered;
+    }
+
+    mapping(address => AgentData) public agents;
 
     constructor() Ownable(msg.sender) {}
     
@@ -17,19 +25,70 @@ contract AgentRegistry is Ownable {
         string[] memory skillNames,
         uint256[] memory skillLevels
     ) external returns (address) {
-        Agent agent = new Agent(model, prompt, skillNames, skillLevels);
-        address agentAddr = address(agent);
-        agent.transferOwnership(msg.sender);
-        agentRegistry[agentAddr] = agent;
+        require(skillNames.length == skillLevels.length, "Skills mismatch");
+        require(!agents[msg.sender].isRegistered, "Agent already registered");
+
+        Skill[] memory skills = new Skill[](skillNames.length);
+        for (uint i = 0; i < skillNames.length; i++) {
+            skills[i] = Skill({
+                name: skillNames[i],
+                level: skillLevels[i]
+            });
+        }
+
+        agents[msg.sender].model = model;
+        agents[msg.sender].prompt = prompt;
+        agents[msg.sender].reputation = 100;
+        agents[msg.sender].isRegistered = true;
+        
+        // Add skills one by one
+        for (uint i = 0; i < skills.length; i++) {
+            agents[msg.sender].skills.push(skills[i]);
+        }
         
         emit AgentRegistered({
-            agent: agentAddr,
+            agent: msg.sender,
             model: model
         });
-        return agentAddr;
+        return msg.sender;
+    }
+
+    function updateReputation(uint256 _reputation) external override {
+        require(agents[msg.sender].isRegistered, "Agent not registered");
+        agents[msg.sender].reputation = _reputation;
+        emit ReputationUpdated(msg.sender, _reputation);
+    }
+
+    function getSkills() external view override returns (Skill[] memory) {
+        require(agents[msg.sender].isRegistered, "Agent not registered");
+        return agents[msg.sender].skills;
+    }
+
+    function getReputation() external view override returns (uint256) {
+        require(agents[msg.sender].isRegistered, "Agent not registered");
+        return agents[msg.sender].reputation;
+    }
+
+    function addSkill(string memory name, uint256 level) external {
+        require(agents[msg.sender].isRegistered, "Agent not registered");
+        agents[msg.sender].skills.push(Skill({
+            name: name,
+            level: level
+        }));
     }
 
     function isRegistered(address agent) external view returns (bool) {
-        return address(agentRegistry[agent]) != address(0);
+        return agents[agent].isRegistered;
+    }
+
+    function getAgentData(address agent) external view returns (
+        string memory model,
+        string memory prompt,
+        Skill[] memory skills,
+        uint256 reputation
+    ) {
+        require(agents[agent].isRegistered, "Agent not registered");
+        AgentData storage data = agents[agent];
+        return (data.model, data.prompt, data.skills, data.reputation);
     }
 }

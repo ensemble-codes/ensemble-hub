@@ -19,6 +19,10 @@ args = "Hardhat Tests"
 task = "workflow.run"
 args = "SDK Build"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Hardhat Node"
+
 [[workflows.workflow]]
 name = "Hardhat Tests"
 author = "agent"
@@ -47,5 +51,24 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "cd packages/sdk && npm run build"
 
+[[workflows.workflow]]
+name = "Hardhat Node"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd packages/contracts && npx hardhat node"
+waitForPort = 8545
+
 [deployment]
 run = ["sh", "-c", "cd packages/contracts && npx hardhat test"]
+
+[[ports]]
+localPort = 8545
+externalPort = 80

@@ -12,13 +12,19 @@ import {
 } from "./types";
 
 export class AIAgentsSDK {
-  private provider: ethers.Provider;
-  private taskRegistry: TaskRegistryContract;
-  private agentRegistry: AgentRegistryContract;
+  protected provider: ethers.Provider;
+  protected taskRegistry: TaskRegistryContract;
+  protected agentRegistry: AgentRegistryContract;
+
+  protected chainId: number;
 
   constructor(config: ContractConfig, signer?: ethers.Signer) {
-    this.provider = new ethers.JsonRpcProvider(config.rpcUrl);
+    this.provider = new ethers.JsonRpcProvider(config.network.rpcUrl);
+    this.chainId = config.network.chainId;
     const signerOrProvider = signer || this.provider;
+
+    // Validate network connection and chain ID
+    this.validateNetwork();
 
     // Load contract ABIs
     const TaskRegistryABI = require("../../../packages/contracts/artifacts/contracts/TaskRegistry.sol/TaskRegistry.json").abi;
@@ -58,22 +64,51 @@ export class AIAgentsSDK {
   }
 
   // Agent Management Methods
-  async registerAgent(agentAddress: string, skills: string[]): Promise<void> {
-    const tx = await this.agentRegistry.registerAgent(agentAddress, skills);
-    await tx.wait();
+  async registerAgent(
+    model: string,
+    prompt: string,
+    skills: { name: string; level: number }[]
+  ): Promise<string> {
+    const skillNames = skills.map(s => s.name);
+    const skillLevels = skills.map(s => s.level);
+    
+    const tx = await this.agentRegistry.registerAgent(model, prompt, skillNames, skillLevels);
+    const receipt = await tx.wait();
+    const event = receipt.events?.find(e => e.event === "AgentRegistered");
+    
+    if (!event?.args?.agent) {
+      throw new Error("Agent registration failed: No agent address in event");
+    }
+    
+    return event.args.agent;
   }
 
   async getAgentData(agentAddress: string): Promise<AgentData> {
-    const [reputation, skills] = await Promise.all([
-      this.agentRegistry.getReputation(agentAddress),
-      this.agentRegistry.getSkills(agentAddress)
-    ]);
+    const [model, prompt, skills, reputation] = await this.agentRegistry.getAgentData(agentAddress);
+    const isRegistered = await this.agentRegistry.isRegistered(agentAddress);
 
     return {
       address: agentAddress,
+      model,
+      prompt,
+      skills,
       reputation,
-      skills
+      isRegistered
     };
+  }
+
+  async addAgentSkill(name: string, level: number): Promise<void> {
+    const tx = await this.agentRegistry.addSkill(name, level);
+    await tx.wait();
+  }
+
+  async updateAgentReputation(reputation: BigNumberish): Promise<void> {
+    const tx = await this.agentRegistry.updateReputation(reputation);
+    await tx.wait();
+  }
+
+  async isAgentRegistered(agentAddress: string): Promise<boolean> {
+    return await this.agentRegistry.isRegistered(agentAddress);
   }
 
   // Task Instance Methods
@@ -127,8 +162,25 @@ export class AIAgentsSDK {
     }
   }
 
+  // Network validation
+  private async validateNetwork(): Promise<void> {
+    try {
+      const network = await this.provider.getNetwork();
+      if (network.chainId !== BigInt(this.chainId)) {
+        throw new Error(
+          `Chain ID mismatch. Expected ${this.chainId}, got ${network.chainId}`
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Network validation failed: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
   // Utils
-  async connect(signer: ethers.Signer): Promise<void> {
+  async connect(signer: ethers.Wallet | ethers.JsonRpcSigner): Promise<void> {
     this.taskRegistry = this.taskRegistry.connect(signer) as TaskRegistryContract;
     this.agentRegistry = this.agentRegistry.connect(signer) as AgentRegistryContract;
   }

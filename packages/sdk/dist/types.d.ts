@@ -28,9 +28,23 @@ export interface TaskRegistryContract extends BaseContract {
     getTasksByOwner(ownerAddress: string): Promise<string[]>;
 }
 export interface AgentRegistryContract extends BaseContract {
-    registerAgent(agentAddress: string, skills: string[]): Promise<any>;
-    getReputation(agentAddress: string): Promise<bigint>;
-    getSkills(agentAddress: string): Promise<string[]>;
+    registerAgent(model: string, prompt: string, skillNames: string[], skillLevels: number[]): Promise<{
+        wait(): Promise<{
+            events: Array<{
+                event: string;
+                args: {
+                    agent: string;
+                    model: string;
+                };
+            }>;
+        }>;
+    }>;
+    updateReputation(reputation: BigNumberish): Promise<any>;
+    getSkills(): Promise<Skill[]>;
+    getReputation(): Promise<bigint>;
+    addSkill(name: string, level: number): Promise<any>;
+    isRegistered(agent: string): Promise<boolean>;
+    getAgentData(agent: string): Promise<[string, string, Skill[], BigNumberish]>;
 }
 export interface TaskContract extends BaseContract {
     prompt(): Promise<string>;
@@ -61,17 +75,29 @@ export interface TaskData {
     assignee?: string;
     status: TaskStatus;
 }
+export interface Skill {
+    name: string;
+    level: number;
+}
 export interface AgentData {
     address: string;
+    model: string;
+    prompt: string;
+    skills: Skill[];
     reputation: BigNumberish;
-    skills: string[];
+    isRegistered: boolean;
 }
 export interface TaskCreationParams {
     prompt: string;
     taskType: TaskType;
 }
+export interface NetworkConfig {
+    chainId: number;
+    name?: string;
+    rpcUrl: string;
+}
 export interface ContractConfig {
     taskRegistryAddress: string;
     agentRegistryAddress: string;
-    rpcUrl: string;
+    network: NetworkConfig;
 }
