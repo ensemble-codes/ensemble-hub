@@ -6,16 +6,23 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "clean": "hardhat clean",
+    "node": "hardhat node",
+    "deploy": "hardhat run scripts/deploy.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@nomicfoundation/hardhat-ignition": "0.15.8",
+    "@nomicfoundation/hardhat-ignition-ethers": "0.15.8",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@openzeppelin/contracts": "^5.1.0",
     "chai": "4.5.0",
+    "dotenv": "16.4.5",
     "hardhat": "^2.22.16"
   }
 }

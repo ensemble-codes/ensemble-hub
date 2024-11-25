@@ -43,10 +43,9 @@ describe("TaskRegistry", function () {
         
         const taskCreatedEvent = events.find(event => event.name === "TaskCreated");
         expect(taskCreatedEvent).to.not.be.undefined;
-        const taskAddress = taskCreatedEvent.args.task;
+        const taskId = taskCreatedEvent.args.taskId;
 
-        await registry.assignTo(taskAddress, user.address);
-        const task = await ethers.getContractAt("TaskConnector", taskAddress);
-        expect(await registry.getAssignee(taskAddress)).to.equal(user.address);
+        await registry.assignTo(taskId, user.address);
+        expect(await registry.getAssignee(taskId)).to.equal(user.address);
     });
 });
