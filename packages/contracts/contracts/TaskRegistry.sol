@@ -40,4 +40,9 @@ contract TaskRegistry is Ownable {
     function getTasksByOwner(address owner) external view returns (Task[] memory) {
         return tasksRegistry[owner];
     }
+
+    function getStatus(address taskAddr) external view returns (Task.TaskStatus) {
+        Task task = Task(taskAddr);
+        return task.status();
+    }
 }

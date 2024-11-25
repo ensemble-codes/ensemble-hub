@@ -226,8 +226,8 @@
       ]
     },
     "/home/runner/ensemble-ai-agents/packages/contracts/contracts/TaskRegistry.sol": {
-      "lastModificationDate": 1732479471504,
-      "contentHash": "4b3e6245ebf1d30a70efb8fd4c3ad632",
+      "lastModificationDate": 1732517884552,
+      "contentHash": "48335335094998f3da1e8dc8ab1cd10d",
       "sourceName": "contracts/TaskRegistry.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -338,6 +338,46 @@
       ],
       "artifacts": [
         "ITask"
+      ]
+    },
+    "/home/runner/ensemble-ai-agents/packages/contracts/contracts/TaskConnector.sol": {
+      "lastModificationDate": 1732517848000,
+      "contentHash": "e04a6b7d47a38a93fbfc689ae0fc0c6f",
+      "sourceName": "contracts/TaskConnector.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "./TaskRegistry.sol",
+        "./interfaces/ITask.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "TaskConnector"
       ]
     }
   }
