@@ -5,38 +5,34 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./TaskRegistry.sol";
 import "./interfaces/ITask.sol";
 
-contract TaskConnector is ReentrancyGuard {
+contract TaskConnector is ITask, ReentrancyGuard {
     TaskRegistry public immutable registry;
-    mapping(address => bool) public permissions;
-    
-    event TaskExecuted(uint256 indexed taskId, bool success);
     
     constructor(address _registry) {
         registry = TaskRegistry(_registry);
-        permissions[_registry] = true;
-    }
-    
-    modifier onlyRegistry() {
-        require(msg.sender == address(registry), "Only registry can call");
-        _;
-    }
-    
-    function setPermission(address user, bool allowed) external onlyRegistry {
-        permissions[user] = allowed;
     }
     
     function execute(bytes calldata data, address target, uint256 value)
         external
+        override
         nonReentrant
         returns (bool)
     {
-        require(msg.sender == ITask(address(this)).getAssignee(), "Only assignee can execute");
-        require(registry.getStatus(address(this)) == ITask.TaskStatus.ASSIGNED, "Invalid task status");
-        require(permissions[target], "Target not permitted");
+        require(msg.sender == registry.getAssignee(address(this)), "Only assignee can execute");
+        require(registry.getStatus(address(this)) == TaskStatus.ASSIGNED, "Invalid task status");
         
         (bool success, ) = target.call{value: value}(data);
         
+        registry.updateTaskStatus(address(this), success ? TaskStatus.COMPLETED : TaskStatus.FAILED);
         emit TaskExecuted(uint256(uint160(address(this))), success);
         return success;
+    }
+
+    function getStatus() external view override returns (TaskStatus) {
+        return registry.getStatus(address(this));
+    }
+
+    function getAssignee() external view override returns (address) {
+        return registry.getAssignee(address(this));
     }
 }

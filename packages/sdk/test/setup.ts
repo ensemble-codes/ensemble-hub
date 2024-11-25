@@ -1,9 +1,22 @@
+/// <reference types="jest" />
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import { TestSDK } from './helpers';
 
+import { jest } from '@jest/globals';
+
 // Enable Jest mocking
-jest.mock('ethers');
+jest.mock('ethers', () => ({
+  ethers: {
+    Contract: jest.fn(),
+    JsonRpcProvider: jest.fn().mockImplementation(() => ({
+      getNetwork: () => Promise.resolve({ chainId: BigInt(1337) })
+    })),
+    Wallet: jest.fn().mockImplementation(() => ({
+      connect: jest.fn()
+    }))
+  }
+}));
 
 // Test configuration
 export const TEST_CONFIG = {
@@ -30,10 +43,10 @@ export class MockProvider {
 // Test fixture
 export const setupTestEnv = async () => {
   const provider = new MockProvider();
-  const wallet = {
-    provider,
-    address: "0x0000000000000000000000000000000000000000"
-  };
+  const wallet = new ethers.Wallet(
+    "0x0123456789012345678901234567890123456789012345678901234567890123",
+    provider as any
+  );
   
   // Mock ethers.Contract
   const mockTaskRegistry = {

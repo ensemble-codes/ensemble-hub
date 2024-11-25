@@ -15,10 +15,16 @@ export interface TaskRegistryContract extends BaseContract {
   createTask(prompt: string, taskType: TaskType): Promise<{
     wait(): Promise<{ events: Array<{ event: string; args: TaskCreatedEvent }> }>;
   }>;
-  assignAgent(taskAddress: string, agentAddress: string): Promise<{
+  assignTo(taskAddress: string, agentAddress: string): Promise<{
     wait(): Promise<{ events: Array<{ event: string; args: AgentAssignedEvent }> }>;
   }>;
+  setPermission(taskAddress: string, user: string, allowed: boolean): Promise<{
+    wait(): Promise<void>;
+  }>;
   getTasksByOwner(ownerAddress: string): Promise<string[]>;
+  getStatus(taskAddress: string): Promise<TaskStatus>;
+  getAssignee(taskAddress: string): Promise<string>;
+  tasks(taskAddress: string): Promise<[string, number, string, number, string]>; // [prompt, taskType, owner, status, assignee]
 }
 
 export interface AgentRegistryContract extends BaseContract {
@@ -36,17 +42,10 @@ export interface AgentRegistryContract extends BaseContract {
   getAgentData(agent: string): Promise<[string, string, Skill[], BigNumberish]>;
 }
 
-export interface TaskContract extends BaseContract {
-  prompt(): Promise<string>;
-  taskType(): Promise<TaskType>;
-  assignee(): Promise<string>;
-  status(): Promise<TaskStatus>;
-  permissions(address: string): Promise<boolean>;
-  setPermission(user: string, allowed: boolean): Promise<any>;
-  assignTo(assignee: string): Promise<any>;
-  execute(data: string, target: string, value: BigNumberish): Promise<boolean>;
-  getStatus(): Promise<TaskStatus>;
-  getAssignee(): Promise<string>;
+export interface TaskConnectorContract extends BaseContract {
+  execute(data: string, target: string, value: BigNumberish): Promise<{
+    wait(): Promise<{ events: Array<{ event: string; args: { taskId: BigNumberish; success: boolean } }> }>;
+  }>;
 }
 
 export enum TaskType {
@@ -67,6 +66,7 @@ export interface TaskData {
   taskType: TaskType;
   assignee?: string;
   status: TaskStatus;
+  owner: string;
 }
 
 export interface Skill {

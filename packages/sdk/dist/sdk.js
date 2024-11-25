@@ -26,7 +26,7 @@ class AIAgentsSDK {
         return event.args.task;
     }
     async assignTask(taskAddress, agentAddress) {
-        const tx = await this.taskRegistry.assignAgent(taskAddress, agentAddress);
+        const tx = await this.taskRegistry.assignTo(taskAddress, agentAddress);
         await tx.wait();
     }
     async getTasksByOwner(ownerAddress) {
@@ -69,27 +69,23 @@ class AIAgentsSDK {
     }
     // Task Instance Methods
     async getTaskData(taskAddress) {
-        const TaskABI = require("../../../packages/contracts/artifacts/contracts/Task.sol/Task.json").abi;
-        const taskContract = new ethers_1.ethers.Contract(taskAddress, TaskABI, this.provider);
-        const [prompt, taskType, assignee, status] = await Promise.all([
-            taskContract.prompt(),
-            taskContract.taskType(),
-            taskContract.assignee(),
-            taskContract.status()
-        ]);
+        const [prompt, taskType, owner, status, assignee] = await this.taskRegistry.tasks(taskAddress);
         return {
             prompt,
             taskType,
             assignee: assignee || undefined,
-            status
+            status,
+            owner
         };
     }
     async executeTask(taskAddress, data, target, value = 0) {
-        const TaskABI = require("../../../packages/contracts/artifacts/contracts/Task.sol/Task.json").abi;
-        const taskContract = new ethers_1.ethers.Contract(taskAddress, TaskABI, this.provider);
+        const TaskConnectorABI = require("../../../packages/contracts/artifacts/contracts/TaskConnector.sol/TaskConnector.json").abi;
+        const taskConnector = new ethers_1.ethers.Contract(taskAddress, TaskConnectorABI, this.provider);
         try {
-            const tx = await taskContract.execute(data, target, value);
-            return tx;
+            const tx = await taskConnector.execute(data, target, value);
+            const receipt = await tx.wait();
+            const event = receipt.events?.find((e) => e.event === "TaskExecuted");
+            return event?.args?.success || false;
         }
         catch (error) {
             console.error("Task execution failed:", error);
@@ -97,10 +93,8 @@ class AIAgentsSDK {
         }
     }
     async setTaskPermission(taskAddress, user, allowed) {
-        const TaskABI = require("../../../packages/contracts/artifacts/contracts/Task.sol/Task.json").abi;
-        const taskContract = new ethers_1.ethers.Contract(taskAddress, TaskABI, this.provider);
         try {
-            const tx = await taskContract.setPermission(user, allowed);
+            const tx = await this.taskRegistry.setPermission(taskAddress, user, allowed);
             await tx.wait();
         }
         catch (error) {

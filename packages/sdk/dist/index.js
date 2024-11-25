@@ -14,5 +14,13 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AIAgentsSDK = exports.TaskStatus = exports.TaskType = void 0;
 __exportStar(require("./sdk"), exports);
 __exportStar(require("./types"), exports);
+// Re-export commonly used enums and types for convenience
+var types_1 = require("./types");
+Object.defineProperty(exports, "TaskType", { enumerable: true, get: function () { return types_1.TaskType; } });
+Object.defineProperty(exports, "TaskStatus", { enumerable: true, get: function () { return types_1.TaskStatus; } });
+// Export the main SDK class
+var sdk_1 = require("./sdk");
+Object.defineProperty(exports, "AIAgentsSDK", { enumerable: true, get: function () { return sdk_1.AIAgentsSDK; } });

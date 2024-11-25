@@ -17,7 +17,7 @@ export interface TaskRegistryContract extends BaseContract {
             }>;
         }>;
     }>;
-    assignAgent(taskAddress: string, agentAddress: string): Promise<{
+    assignTo(taskAddress: string, agentAddress: string): Promise<{
         wait(): Promise<{
             events: Array<{
                 event: string;
@@ -25,7 +25,13 @@ export interface TaskRegistryContract extends BaseContract {
             }>;
         }>;
     }>;
+    setPermission(taskAddress: string, user: string, allowed: boolean): Promise<{
+        wait(): Promise<void>;
+    }>;
     getTasksByOwner(ownerAddress: string): Promise<string[]>;
+    getStatus(taskAddress: string): Promise<TaskStatus>;
+    getAssignee(taskAddress: string): Promise<string>;
+    tasks(taskAddress: string): Promise<[string, number, string, number, string]>;
 }
 export interface AgentRegistryContract extends BaseContract {
     registerAgent(model: string, prompt: string, skillNames: string[], skillLevels: number[]): Promise<{
@@ -46,17 +52,18 @@ export interface AgentRegistryContract extends BaseContract {
     isRegistered(agent: string): Promise<boolean>;
     getAgentData(agent: string): Promise<[string, string, Skill[], BigNumberish]>;
 }
-export interface TaskContract extends BaseContract {
-    prompt(): Promise<string>;
-    taskType(): Promise<TaskType>;
-    assignee(): Promise<string>;
-    status(): Promise<TaskStatus>;
-    permissions(address: string): Promise<boolean>;
-    setPermission(user: string, allowed: boolean): Promise<any>;
-    assignTo(assignee: string): Promise<any>;
-    execute(data: string, target: string, value: BigNumberish): Promise<boolean>;
-    getStatus(): Promise<TaskStatus>;
-    getAssignee(): Promise<string>;
+export interface TaskConnectorContract extends BaseContract {
+    execute(data: string, target: string, value: BigNumberish): Promise<{
+        wait(): Promise<{
+            events: Array<{
+                event: string;
+                args: {
+                    taskId: BigNumberish;
+                    success: boolean;
+                };
+            }>;
+        }>;
+    }>;
 }
 export declare enum TaskType {
     SIMPLE = 0,
@@ -74,6 +81,7 @@ export interface TaskData {
     taskType: TaskType;
     assignee?: string;
     status: TaskStatus;
+    owner: string;
 }
 export interface Skill {
     name: string;

@@ -2,47 +2,83 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Task.sol";
+import "./interfaces/ITask.sol";
+import "./TaskConnector.sol";
 
 contract TaskRegistry is Ownable {
-    mapping(address => Task[]) public tasksRegistry;
+    struct TaskData {
+        string prompt;
+        ITask.TaskType taskType;
+        address owner;
+        ITask.TaskStatus status;
+        address assignee;
+        mapping(address => bool) permissions;
+    }
+    
+    mapping(address => TaskData) public tasks;
+    mapping(address => address[]) public ownerTasks;
     
     constructor() Ownable(msg.sender) {}
     
     event TaskCreated(address indexed owner, address task);
-    event AgentAssigned(address indexed task, address indexed agent);
+    event TaskStatusChanged(address indexed task, ITask.TaskStatus status);
+    event TaskAssigned(address indexed task, address indexed agent);
+    event PermissionUpdated(address indexed task, address indexed user, bool allowed);
 
     function createTask(
         string memory prompt,
-        Task.TaskType taskType
+        ITask.TaskType taskType
     ) external returns (address) {
-        // Create task with msg.sender as owner and registry permissions
-        Task task = new Task(prompt, taskType, msg.sender, address(this));
-        address taskAddr = address(task);
-        tasksRegistry[msg.sender].push(task);
+        address taskAddr = address(new TaskConnector(address(this)));
         
-        emit TaskCreated({
-            owner: msg.sender,
-            task: taskAddr
-        });
+        TaskData storage task = tasks[taskAddr];
+        task.prompt = prompt;
+        task.taskType = taskType;
+        task.owner = msg.sender;
+        task.status = ITask.TaskStatus.CREATED;
+        task.permissions[address(this)] = true;
+        
+        ownerTasks[msg.sender].push(taskAddr);
+        
+        emit TaskCreated(msg.sender, taskAddr);
         return taskAddr;
     }
 
-    function assignAgent(address taskAddr, address agent) external {
-        Task task = Task(taskAddr);
-        require(msg.sender == task.owner(), "Not authorized");
-        require(task.permissions(address(this)), "Registry not authorized");
+    function setPermission(address taskAddr, address user, bool allowed) external {
+        TaskData storage task = tasks[taskAddr];
+        require(msg.sender == task.owner, "Not authorized");
+        task.permissions[user] = allowed;
+        emit PermissionUpdated(taskAddr, user, allowed);
+    }
+
+    function assignTo(address taskAddr, address _assignee) external {
+        TaskData storage task = tasks[taskAddr];
+        require(msg.sender == task.owner || task.permissions[msg.sender], "Not authorized");
+        require(task.status == ITask.TaskStatus.CREATED, "Invalid task status");
         
-        task.assignTo(agent);
-        emit AgentAssigned(taskAddr, agent);
+        task.assignee = _assignee;
+        task.status = ITask.TaskStatus.ASSIGNED;
+        
+        emit TaskAssigned(taskAddr, _assignee);
+        emit TaskStatusChanged(taskAddr, ITask.TaskStatus.ASSIGNED);
     }
 
-    function getTasksByOwner(address owner) external view returns (Task[] memory) {
-        return tasksRegistry[owner];
+    function getTasksByOwner(address owner) external view returns (address[] memory) {
+        return ownerTasks[owner];
     }
 
-    function getStatus(address taskAddr) external view returns (Task.TaskStatus) {
-        Task task = Task(taskAddr);
-        return task.status();
+    function getStatus(address taskAddr) external view returns (ITask.TaskStatus) {
+        return tasks[taskAddr].status;
+    }
+    
+    function getAssignee(address taskAddr) external view returns (address) {
+        return tasks[taskAddr].assignee;
+    }
+    
+    function updateTaskStatus(address taskAddr, ITask.TaskStatus newStatus) external {
+        TaskData storage task = tasks[taskAddr];
+        require(msg.sender == taskAddr, "Only task can update status");
+        task.status = newStatus;
+        emit TaskStatusChanged(taskAddr, newStatus);
     }
 }

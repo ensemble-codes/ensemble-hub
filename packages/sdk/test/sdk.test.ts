@@ -4,6 +4,12 @@ import { TestSDK } from './helpers';
 import { TaskType } from '../src/types';
 
 describe('AIAgentsSDK', () => {
+  afterEach(() => {
+    // Restore original Contract constructor if it was mocked
+    if ((ethers as any).Contract.mockRestore) {
+      (ethers as any).Contract.mockRestore();
+    }
+  });
   describe('Initialization', () => {
     it('should initialize with different configs', async () => {
       const { signer } = await setupTestEnv();
@@ -44,8 +50,10 @@ describe('AIAgentsSDK', () => {
         })
       };
       
-      const { mockTaskRegistry } = await setupTestEnv();
-      mockTaskRegistry.createTask.mockResolvedValue(tx);
+      const mockTaskRegistry = {
+        createTask: jest.fn().mockResolvedValue(tx)
+      };
+      (sdk as any)._taskRegistry = mockTaskRegistry;
       
       const result = await sdk.createTask(taskParams);
       expect(result).to.equal(mockTaskAddress);
@@ -58,11 +66,13 @@ describe('AIAgentsSDK', () => {
       const agentAddress = "0x0000000000000000000000000000000000000004";
       
       let assigned = false;
-      const { mockTaskRegistry } = await setupTestEnv();
-      mockTaskRegistry.assignAgent.mockImplementation(async () => {
-        assigned = true;
-        return { wait: async () => {} };
-      });
+      const mockTaskRegistry = {
+        assignTo: jest.fn().mockImplementation(async () => {
+          assigned = true;
+          return { wait: async () => {} };
+        })
+      };
+      (sdk as any)._taskRegistry = mockTaskRegistry;
       
       await sdk.assignTask(taskAddress, agentAddress);
       expect(assigned).to.be.true;
@@ -77,8 +87,10 @@ describe('AIAgentsSDK', () => {
         "0x0000000000000000000000000000000000000007"
       ];
       
-      const { mockTaskRegistry } = await setupTestEnv();
-      mockTaskRegistry.getTasksByOwner.mockResolvedValue(mockTasks);
+      const mockTaskRegistry = {
+        getTasksByOwner: jest.fn().mockResolvedValue(mockTasks)
+      };
+      (sdk as any)._taskRegistry = mockTaskRegistry;
       
       const tasks = await sdk.getTasksByOwner(ownerAddress);
       expect(tasks).to.deep.equal(mockTasks);
@@ -93,13 +105,25 @@ describe('AIAgentsSDK', () => {
       const skills = ["skill1", "skill2"];
       
       let registered = false;
-      const { mockAgentRegistry } = await setupTestEnv();
-      mockAgentRegistry.registerAgent.mockImplementation(async () => {
-        registered = true;
-        return { wait: async () => {} };
-      });
+      const mockAgentRegistry = {
+        registerAgent: jest.fn().mockImplementation(async () => {
+          registered = true;
+          return { 
+            wait: async () => ({
+              events: [{
+                event: "AgentRegistered",
+                args: { agent: "0x0000000000000000000000000000000000000001" }
+              }]
+            })
+          };
+        })
+      };
+      (sdk as any)._agentRegistry = mockAgentRegistry;
       
-      await sdk.registerAgent(agentAddress, skills);
+      await sdk.registerAgent("gpt-4", "Test prompt", [
+        { name: "skill1", level: 1 },
+        { name: "skill2", level: 2 }
+      ]);
       expect(registered).to.be.true;
     });
 
@@ -112,9 +136,12 @@ describe('AIAgentsSDK', () => {
         skills: ["skill1", "skill2"]
       };
       
-      const { mockAgentRegistry } = await setupTestEnv();
-      mockAgentRegistry.getReputation.mockResolvedValue(mockData.reputation);
-      mockAgentRegistry.getSkills.mockResolvedValue(mockData.skills);
+      const mockAgentRegistry = {
+        getReputation: jest.fn().mockResolvedValue(BigInt(mockData.reputation)),
+        getSkills: jest.fn().mockResolvedValue(mockData.skills.map(s => ({ name: s, level: 1 }))),
+        isRegistered: jest.fn().mockResolvedValue(true)
+      };
+      (sdk as any)._agentRegistry = mockAgentRegistry;
       
       const data = await sdk.getAgentData(agentAddress);
       expect(data).to.deep.include(mockData);
@@ -133,15 +160,16 @@ describe('AIAgentsSDK', () => {
         status: 1
       };
       
-      // Mock contract methods
       const mockContract = {
-        prompt: async () => mockData.prompt,
-        taskType: async () => mockData.taskType,
-        assignee: async () => mockData.assignee,
-        status: async () => mockData.status
+        tasks: jest.fn().mockResolvedValue([
+          mockData.prompt,
+          mockData.taskType,
+          "0x0000000000000000000000000000000000000001", // owner
+          mockData.status,
+          mockData.assignee
+        ])
       };
-      
-      (sdk as TestSDK).setMockTaskContract(taskAddress, mockContract);
+      (sdk as any)._taskRegistry = mockContract;
       
       const data = await sdk.getTaskData(taskAddress);
       expect(data).to.deep.equal(mockData);
@@ -151,16 +179,36 @@ describe('AIAgentsSDK', () => {
       const { sdk } = await setupTestEnv();
       
       const taskAddress = "0x0000000000000000000000000000000000000012";
-      const mockTx = { hash: "0x123" };
       
-      const mockContract = {
-        execute: async () => mockTx
+      // Mock the ethers.Contract constructor
+      const mockTaskConnector = {
+        execute: jest.fn().mockImplementation(() => ({
+          wait: async () => ({
+            events: [{
+              event: "TaskExecuted",
+              args: { success: true }
+            }]
+          })
+        }))
       };
       
-      (sdk as TestSDK).setMockTaskContract(taskAddress, mockContract);
+      // Mock ethers.Contract class
+      const originalContract = ethers.Contract;
+      (ethers as any).Contract = jest.fn().mockImplementation(() => mockTaskConnector);
+      
+      const mockTaskRegistry = {
+        tasks: jest.fn().mockResolvedValue([
+          "Test prompt",
+          0,
+          "0x0000000000000000000000000000000000000001",
+          0,
+          "0x0000000000000000000000000000000000000002"
+        ])
+      };
+      (sdk as any)._taskRegistry = mockTaskRegistry;
       
       const result = await sdk.executeTask(taskAddress, "0x", "0x0", 0);
-      expect(result).to.deep.equal(mockTx);
+      expect(result).to.be.true;
     });
 
     it('should set task permission', async () => {
@@ -170,13 +218,16 @@ describe('AIAgentsSDK', () => {
       let permissionSet = false;
       
       const mockContract = {
-        setPermission: async () => {
+        setPermission: jest.fn().mockImplementation(() => {
           permissionSet = true;
           return { wait: async () => {} };
-        }
+        })
       };
       
-      (sdk as TestSDK).setMockTaskContract(taskAddress, mockContract);
+      // Replace the contract instance
+      const originalContract = ethers.Contract;
+      (ethers as any).Contract = jest.fn().mockImplementation(() => mockContract);
+      (sdk as any)._taskRegistry = mockContract;
       
       await sdk.setTaskPermission(taskAddress, "0x0", true);
       expect(permissionSet).to.be.true;
@@ -187,12 +238,14 @@ describe('AIAgentsSDK', () => {
     it('should handle failed task creation', async () => {
       const { sdk } = await setupTestEnv();
       
-      const prototype = Object.getPrototypeOf(sdk);
-      prototype._taskRegistry = {
-        createTask: async () => {
-          throw new Error("Transaction failed");
-        }
+      // Mock provider to throw network validation error
+      // Mock provider to return invalid chain ID
+      const mockProvider = {
+        getNetwork: jest.fn().mockResolvedValue({ 
+          chainId: BigInt(999999) // Different from expected chain ID
+        })
       };
+      (sdk as any).provider = mockProvider;
       
       try {
         await sdk.createTask({ prompt: "Test", taskType: TaskType.SIMPLE });
@@ -206,13 +259,17 @@ describe('AIAgentsSDK', () => {
       const { sdk } = await setupTestEnv();
       
       const taskAddress = "0x0000000000000000000000000000000000000014";
-      const mockContract = {
-        execute: async () => {
-          throw new Error("Execution failed");
-        }
+      const mockTaskConnector = {
+        execute: jest.fn().mockRejectedValue(new Error("Execution failed")),
+        wait: jest.fn()
       };
-      
-      (sdk as TestSDK).setMockTaskContract(taskAddress, mockContract);
+
+      // Mock Contract constructor and ensure it returns proper interface
+      const originalContract = ethers.Contract;
+      (ethers as any).Contract = jest.fn().mockImplementation(() => ({
+        execute: mockTaskConnector.execute,
+        wait: mockTaskConnector.wait
+      }));
       
       try {
         await sdk.executeTask(taskAddress, "0x", "0x0", 0);

@@ -13,9 +13,9 @@
           "type": "uint256"
         },
         {
-          "indexed": true,
+          "indexed": false,
           "internalType": "address",
-          "name": "agent",
+          "name": "assignee",
           "type": "address"
         }
       ],
