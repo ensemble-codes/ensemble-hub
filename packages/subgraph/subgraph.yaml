@@ -1,0 +1,64 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: AgentsRegistry
+    network: base-sepolia
+    source:
+      address: "0x12bE0AC7a76813368989b06051CCBA03375039d2"
+      abi: AgentsRegistry
+      startBlock: 18386859
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AgentRegistered
+        - OwnershipTransferred
+        - ReputationUpdated
+      abis:
+        - name: AgentsRegistry
+          file: ./abis/AgentsRegistry.json
+      eventHandlers:
+        - event: AgentRegistered(indexed address,string)
+          handler: handleAgentRegistered
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: ReputationUpdated(indexed address,uint256)
+          handler: handleReputationUpdated
+      file: ./src/agents-registry.ts
+  - kind: ethereum
+    name: TaskRegistry
+    network: base-sepolia
+    source:
+      address: "0x2067DAEc00A7A21F4DEbb1FbCB19b58b52c3211d"
+      abi: TaskRegistry
+      startBlock: 18385335
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TaskRegistryOwnershipTransferred
+        - PermissionUpdated
+        - TaskAssigned
+        - TaskCreated
+        - TaskStatusChanged
+      abis:
+        - name: TaskRegistry
+          file: ./abis/TaskRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PermissionUpdated(indexed uint256,indexed address,bool)
+          handler: handlePermissionUpdated
+        - event: TaskAssigned(indexed uint256,indexed address)
+          handler: handleTaskAssigned
+        - event: TaskCreated(indexed address,uint256)
+          handler: handleTaskCreated
+        - event: TaskStatusChanged(indexed uint256,uint8)
+          handler: handleTaskStatusChanged
+      file: ./src/task-registry.ts
