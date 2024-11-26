@@ -2,9 +2,13 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IAgent.sol";
 
-contract AgentRegistry is IAgent, Ownable {
+contract AgentsRegistry is Ownable {
+    struct Skill {
+        string name;
+        uint256 level;
+    }
+
     struct AgentData {
         string model;
         string prompt;
@@ -18,6 +22,7 @@ contract AgentRegistry is IAgent, Ownable {
     constructor() Ownable(msg.sender) {}
     
     event AgentRegistered(address indexed agent, string model);
+    event ReputationUpdated(address indexed agent, uint256 newReputation);
 
     function registerAgent(
         string memory model,
@@ -53,18 +58,18 @@ contract AgentRegistry is IAgent, Ownable {
         return msg.sender;
     }
 
-    function updateReputation(uint256 _reputation) external override {
+    function updateReputation(uint256 _reputation) external {
         require(agents[msg.sender].isRegistered, "Agent not registered");
         agents[msg.sender].reputation = _reputation;
         emit ReputationUpdated(msg.sender, _reputation);
     }
 
-    function getSkills() external view override returns (Skill[] memory) {
+    function getSkills() external view returns (Skill[] memory) {
         require(agents[msg.sender].isRegistered, "Agent not registered");
         return agents[msg.sender].skills;
     }
 
-    function getReputation() external view override returns (uint256) {
+    function getReputation() external view returns (uint256) {
         require(agents[msg.sender].isRegistered, "Agent not registered");
         return agents[msg.sender].reputation;
     }

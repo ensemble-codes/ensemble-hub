@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition-ethers";
+import "@nomicfoundation/hardhat-verify";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -44,6 +45,12 @@ const config: HardhatUserConfig = {
     },
     mocha: {
         timeout: 40000
+    },
+    etherscan: {
+      apiKey: process.env.BASE_ETHERSCAN_API_KEY
+    },
+    sourcify: {
+      enabled: true
     }
 };
 

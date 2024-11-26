@@ -1,0 +1,26 @@
+type AgentRegistered @entity(immutable: true) {
+  id: Bytes!
+  agent: Bytes! # address
+  model: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ReputationUpdated @entity(immutable: true) {
+  id: Bytes!
+  agent: Bytes! # address
+  newReputation: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
