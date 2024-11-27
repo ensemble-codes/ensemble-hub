@@ -34,7 +34,7 @@ dataSources:
     name: TaskRegistry
     network: base-sepolia
     source:
-      address: "0x2067DAEc00A7A21F4DEbb1FbCB19b58b52c3211d"
+      address: "0xbaC10edd283B7F2d6424a5115C062D1B20f67696"
       abi: TaskRegistry
       startBlock: 18385335
     mapping:
@@ -57,7 +57,7 @@ dataSources:
           handler: handlePermissionUpdated
         - event: TaskAssigned(indexed uint256,indexed address)
           handler: handleTaskAssigned
-        - event: TaskCreated(indexed address,uint256)
+        - event: TaskCreated(indexed address,uint256,string,uint8)
           handler: handleTaskCreated
         - event: TaskStatusChanged(indexed uint256,uint8)
           handler: handleTaskStatusChanged

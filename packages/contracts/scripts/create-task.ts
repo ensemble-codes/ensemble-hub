@@ -26,6 +26,15 @@ async function main() {
         const simpleTaskReceipt = await simpleTask.wait();
         console.log("Simple task created in tx:", simpleTaskReceipt.hash);
 
+
+        const secondTask = await taskRegistry.createTask(
+            "Do Y for me",
+            0
+        );
+        // Wait for the transaction to be mined
+        const secondTaskReceipt = await secondTask.wait();
+        console.log("Simple task created in tx:", secondTaskReceipt.hash);
+
     } catch (error) {
         console.error("Error:", error);
     }

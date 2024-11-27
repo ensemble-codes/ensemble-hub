@@ -24,6 +24,20 @@ type ReputationUpdated @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type Task @entity(immutable: true) {
+  id: ID!
+  prompt: String!
+  taskType: Int! # uint8
+  status: Int! # uint8
+  taskId: BigInt!
+  owner: Bytes! # address
+  blockNumber: BigInt!
+  assignee: Bytes # address
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type TaskRegistryOwnershipTransferred @entity(immutable: true) {
   id: Bytes!
   previousOwner: Bytes! # address

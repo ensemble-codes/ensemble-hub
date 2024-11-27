@@ -1,15 +1,27 @@
 [
-  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
   {
     "inputs": [
-      { "internalType": "address", "name": "owner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
     ],
     "name": "OwnableInvalidOwner",
     "type": "error"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
     ],
     "name": "OwnableUnauthorizedAccount",
     "type": "error"
@@ -91,6 +103,18 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "prompt",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum TaskRegistry.TaskType",
+        "name": "taskType",
+        "type": "uint8"
       }
     ],
     "name": "TaskCreated",
@@ -117,8 +141,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "taskId", "type": "uint256" },
-      { "internalType": "address", "name": "_assignee", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_assignee",
+        "type": "address"
+      }
     ],
     "name": "assignTo",
     "outputs": [],
@@ -127,7 +159,11 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "prompt", "type": "string" },
+      {
+        "internalType": "string",
+        "name": "prompt",
+        "type": "string"
+      },
       {
         "internalType": "enum TaskRegistry.TaskType",
         "name": "taskType",
@@ -135,22 +171,42 @@
       }
     ],
     "name": "createTask",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "taskId", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
     ],
     "name": "getAssignee",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "taskId", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
     ],
     "name": "getStatus",
     "outputs": [
@@ -165,11 +221,19 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "owner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
     ],
     "name": "getTasksByOwner",
     "outputs": [
-      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -177,17 +241,37 @@
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "name": "ownerTasks",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -200,9 +284,21 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "taskId", "type": "uint256" },
-      { "internalType": "address", "name": "user", "type": "address" },
-      { "internalType": "bool", "name": "allowed", "type": "bool" }
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "allowed",
+        "type": "bool"
+      }
     ],
     "name": "setPermission",
     "outputs": [],
@@ -210,30 +306,56 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "tasks",
     "outputs": [
-      { "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "internalType": "string", "name": "prompt", "type": "string" },
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "prompt",
+        "type": "string"
+      },
       {
         "internalType": "enum TaskRegistry.TaskType",
         "name": "taskType",
         "type": "uint8"
       },
-      { "internalType": "address", "name": "owner", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
       {
         "internalType": "enum TaskRegistry.TaskStatus",
         "name": "status",
         "type": "uint8"
       },
-      { "internalType": "address", "name": "assignee", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "assignee",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -242,7 +364,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "taskId", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
       {
         "internalType": "enum TaskRegistry.TaskStatus",
         "name": "newStatus",
