@@ -10,18 +10,22 @@ import {
   AgentRegistryContract,
   TaskConnectorContract
 } from "./types";
+import { execute } from '../.graphclient'
+import  {PubSub}  from '@google-cloud/pubsub';
+import { gql } from "graphql-request";
 
 export class AIAgentsSDK {
   protected provider: ethers.Provider;
   protected taskRegistry: TaskRegistryContract;
   protected agentRegistry: AgentRegistryContract;
-
   protected chainId: number;
+  protected pubsub: PubSub;
+  protected signer: ethers.Wallet;
 
-  constructor(config: ContractConfig, signer?: ethers.Signer) {
+  constructor(config: ContractConfig, walletCredentials: string) {
     this.provider = new ethers.JsonRpcProvider(config.network.rpcUrl);
     this.chainId = config.network.chainId;
-    const signerOrProvider = signer || this.provider;
+    this.signer = new ethers.Wallet(walletCredentials, this.provider);
 
     // Validate network connection and chain ID
     this.validateNetwork();
@@ -33,15 +37,62 @@ export class AIAgentsSDK {
     this.taskRegistry = new ethers.Contract(
       config.taskRegistryAddress,
       TaskRegistryABI,
-      signerOrProvider
+      this.signer
     ) as unknown as TaskRegistryContract;
 
     this.agentRegistry = new ethers.Contract(
       config.agentRegistryAddress,
       AgentRegistryABI,
-      signerOrProvider
+      this.signer
     ) as unknown as AgentRegistryContract;
+
+    this.pubsub = new PubSub({projectId: 'projects/ensemble-ai-443111/topics/ensemble-tasks'});
+
+    // // Creates a new topic
+    // const [topic] = await pubsub.createTopic(topicNameOrId);
+    // // console.log(`Topic ${topic.name} created.`);
+  
+    // // Creates a subscription on that new topic
+    // const [subscription] = await topic.createSubscription(`tasks: ${this.signer.address}`);
+  
+    // // Receive callbacks for new messages on the subscription
+    // subscription.on('message', message => {
+    //   console.log('Received message:', message.data.toString());
+    // });
   }
+
+  async start() {
+    const [topics] = await this.pubsub.getTopics();
+    console.log('Topics:');
+    topics.forEach(topic => console.log(topic.name));
+    
+    const topic = topics[0];
+    const [subscription] = await topic.createSubscription(`tasks: ${this.signer.address}`);
+  
+    // // Receive callbacks for new messages on the subscription
+    subscription.on('message', (message: any)  => {
+      console.log('Received message:', message.data.toString());
+    });
+  }
+
+  async getTasksByStatus(owner: string, status: TaskStatus): Promise<string[]> {
+    const myQuery = gql`
+      query {
+        tasks(where: {owner: "${owner}", status: "${status}"}) {
+          id
+        }
+      }
+     `
+    const result = await execute(myQuery, {})
+    console.log(result)
+    return result.tasks;
+  }
+
+  async getProposals(taskId: string): Promise<string[]> {
+    // USE PUBSUB
+  return [];
+  }
+
 
   // Task Management Methods
   async createTask(params: TaskCreationParams): Promise<string> {

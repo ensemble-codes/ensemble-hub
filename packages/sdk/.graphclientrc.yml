@@ -1,0 +1,5 @@
+sources:
+  - name: ensemble-ai
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/12344/ensemble-ai/version/latest
