@@ -19,10 +19,11 @@
   "dependencies": {
     "@nomicfoundation/hardhat-ignition": "0.15.8",
     "@nomicfoundation/hardhat-ignition-ethers": "0.15.8",
-    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.1.0",
     "chai": "4.5.0",
     "dotenv": "16.4.5",
-    "hardhat": "^2.22.16"
+    "hardhat": "^2.22.16",
+    "ensemble-sdk": "file:../sdk"
   }
 }

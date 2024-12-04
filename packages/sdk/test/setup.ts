@@ -21,18 +21,18 @@ jest.mock('ethers', () => ({
 // Test configuration
 export const TEST_CONFIG = {
   network: {
-    rpcUrl: "http://localhost:8545",
-    chainId: 1337,
+    rpcUrl: "http://127.0.0.1:8545",
+    chainId: 31337,
     name: "hardhat"
   },
-  taskRegistryAddress: "0x0000000000000000000000000000000000000001",
-  agentRegistryAddress: "0x0000000000000000000000000000000000000002"
+  taskRegistryAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  agentRegistryAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 };
 
 // Mock Provider Class
 export class MockProvider {
   async getNetwork() {
-    return { chainId: BigInt(1337) };
+    return { chainId: BigInt(31337) };
   }
 
   async getCode() {

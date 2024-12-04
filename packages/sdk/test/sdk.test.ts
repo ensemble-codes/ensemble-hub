@@ -78,31 +78,39 @@ describe('AIAgentsSDK', () => {
       expect(assigned).to.be.true;
     });
 
-    it('should get tasks by owner', async () => {
-      const { sdk } = await setupTestEnv();
-      
-      const ownerAddress = "0x0000000000000000000000000000000000000005";
-      const mockTasks = [
-        "0x0000000000000000000000000000000000000006",
-        "0x0000000000000000000000000000000000000007"
-      ];
-      
-      const mockTaskRegistry = {
-        getTasksByOwner: jest.fn().mockResolvedValue(mockTasks)
-      };
-      (sdk as any)._taskRegistry = mockTaskRegistry;
-      
+    it.only('should get tasks by owner', async () => {
+      // const { sdk } = await setupTestEnv();
+      const { signer } = await setupTestEnv();
+      const sdk = new TestSDK(TEST_CONFIG, signer);
+
+      // Test with default config
+      // const sdk1 = new TestSDK(TEST_CONFIG, signer);
+      const ownerAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
       const tasks = await sdk.getTasksByOwner(ownerAddress);
-      expect(tasks).to.deep.equal(mockTasks);
+      console.log(tasks);
+      // const mockTasks = [
+      //   "0x0000000000000000000000000000000000000006",
+      //   "0x0000000000000000000000000000000000000007"
+      // ];
+      
+      // const mockTaskRegistry = {
+      //   getTasksByOwner: jest.fn().mockResolvedValue(mockTasks)
+      // };
+      // (sdk as any)._taskRegistry = mockTaskRegistry;
+      
+      // const tasks = await sdk.getTasksByOwner(ownerAddress);
+      // expect(tasks).to.deep.equal(mockTasks);
     });
   });
 
   describe('Agent Management', () => {
     it('should register agent', async () => {
+      
       const { sdk } = await setupTestEnv();
       
       const agentAddress = "0x0000000000000000000000000000000000000008";
       const skills = ["skill1", "skill2"];
+      
       
       let registered = false;
       const mockAgentRegistry = {

@@ -8,7 +8,7 @@ describe("AgentRegistry", function () {
 
     beforeEach(async function () {
         [owner] = await ethers.getSigners();
-        AgentRegistry = await ethers.getContractFactory("AgentRegistry");
+        AgentRegistry = await ethers.getContractFactory("AgentsRegistry");
         registry = await AgentRegistry.deploy();
     });
 

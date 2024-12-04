@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
+    "module": "CommonJS",
+    "target": "ES6",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
-  "include": ["src"],
+  "include": ["src", "jest.config.js", "index.ts"],
   "exclude": ["node_modules", "dist", "test"]
 }

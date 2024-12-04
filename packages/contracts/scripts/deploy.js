@@ -1,15 +1,19 @@
+import { ethers } from "hardhat";
+
 async function main() {
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with account:", deployer.address);
 
     // Deploy AgentRegistry
-    const AgentRegistry = await ethers.getContractFactory("AgentRegistry");
+    const AgentRegistry = await ethers.getContractFactory("AgentsRegistry");
     const agentRegistry = await AgentRegistry.deploy();
-    console.log("AgentRegistry deployed to:", agentRegistry.address);
+    await agentRegistry.deployed();
+    console.log("AgentsRegistry deployed to:", agentRegistry.address);
 
     // Deploy TaskRegistry
     const TaskRegistry = await ethers.getContractFactory("TaskRegistry");
     const taskRegistry = await TaskRegistry.deploy();
+    await taskRegistry.deployed();
     console.log("TaskRegistry deployed to:", taskRegistry.address);
 }
 

@@ -4,7 +4,7 @@ import { ContractConfig, TaskRegistryContract, AgentRegistryContract } from '../
 
 // Test helper class to access protected members
 export class TestSDK extends AIAgentsSDK {
-  constructor(config: ContractConfig, signer?: ethers.Signer) {
+  constructor(config: ContractConfig, signer: ethers.Wallet) {
     super(config, signer);
   }
 
