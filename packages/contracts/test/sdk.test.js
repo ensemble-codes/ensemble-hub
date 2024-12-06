@@ -8,10 +8,21 @@ describe("SDK", function () {
 
     beforeEach(async function () {
         [owner] = await ethers.getSigners();
-        console.log('owner:', owner);
+
+        const provider = ethers.provider;
+        console.log('provider:', provider);
+        console.log('provider.connection:', provider.connection);
+        const network = await provider.getNetwork();
+        console.log("Network:", network);
+        // const rpcUrl = provider.connection.url; // URL used by the provider
+
+        
+        // console.log("RPC URL:", rpcUrl);
+
+        // console.log('rpcUrl:', rpcUrl);
         const config = {
             network: {
-                rpcUrl: "http://127.0.0.1:8545",
+                rpcUrl: 'http://127.0.0.1:8545/',
                 chainId: 31337
             },
             taskRegistryAddress: "0xYourTaskRegistryAddress",

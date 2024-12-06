@@ -16,6 +16,10 @@ import TaskRegistryABI from './abi/TaskRegistry.abi.json';
 import AgentRegistryABI from './abi/AgentsRegistry.abi.json';
 // import { gql } from "graphql-request";
 
+/**
+ * @docs  - https://viem.sh/docs/ethers-migration
+ */
+
 export class AIAgentsSDK {
   protected provider: ethers.Provider;
   protected taskRegistry: TaskRegistryContract;
@@ -28,6 +32,7 @@ export class AIAgentsSDK {
 
   constructor(config: ContractConfig, signer: ethers.Wallet, oneNewTask: (taskId: string) => void = () => {}, onTaskUpdated: (taskId: string) => void = () => {}) {
     console.log("Config:", config);
+    console.log('config.network.rpcUrl:', config.network.rpcUrl);
     this.provider = new ethers.JsonRpcProvider(config.network.rpcUrl);
     this.chainId = config.network.chainId;
     this.signer = signer;
@@ -37,9 +42,6 @@ export class AIAgentsSDK {
     // Validate network connection and chain ID
     this.validateNetwork();
 
-    // Load contract ABIs
-    // const TaskRegistryABI = require("./abi/TaskRegistry.json").abi;
-    // const AgentRegistryABI = require("./abi/AgentsRegistry.json").abi;
     console.log('signer:', this.signer);
     this.taskRegistry = new ethers.Contract(
       config.taskRegistryAddress,
@@ -47,13 +49,13 @@ export class AIAgentsSDK {
       this.signer
     ) as unknown as TaskRegistryContract;
     
-    console.log('this.taskRegistry.runner:', this.taskRegistry.runner);
-    console.log('this.taskRegistry.signer:', this.taskRegistry.signer);
+    // console.log('this.taskRegistry.runner:', this.taskRegistry.runner);
+    // console.log('this.taskRegistry.signer:', this.taskRegistry.signer);
 
     const taskRegistryWithSigner = this.taskRegistry.connect(this.signer);
 
-    console.log('taskRegistryWithSigner.runner:', taskRegistryWithSigner.runner);
-    console.log('taskRegistryWithSigner.signer:', taskRegistryWithSigner.signer);
+    // console.log('taskRegistryWithSigner.runner:', taskRegistryWithSigner.runner);
+    // console.log('taskRegistryWithSigner.signer:', taskRegistryWithSigner.signer);
 
     this.agentRegistry = new ethers.Contract(
       config.agentRegistryAddress,
@@ -128,29 +130,25 @@ export class AIAgentsSDK {
   async createTask(params: TaskCreationParams): Promise<string> {
     console.log("Signer address:", await this.signer.getAddress());
     console.log("Signer provider:", this.signer.provider);
-
-
-    console.log('this.taskRegistry.createTask:', this.taskRegistry.createTask);
+    
+    const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
+    console.log('tx:', tx);
+    const receipt = await tx.wait();
+    console.log('receipt:', receipt);
+    console.log('receipt.events:', receipt.events);
+    console.log('receipt.logs', receipt.logs);
+    const event = receipt.events?.find((e: { event: string }) => e.event === "TaskCreated");
+    if (!event?.args?.task) {
+      throw new Error("Task creation failed: No task address in event");
+    }
+    return event.args.task;
 
     // try {
-    //   // Ensure the taskRegistry has a connected signer
-    //   if (!this.taskRegistry.runner) {
-    //     throw new Error("Contract is not connected to a signer. Ensure you have a valid signer.");
-    //   }
+    //   const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
+    //   console.log('promise:', tx);
     // } catch (error) {
     //   console.error('Error creating task:', error);
     // }
-
-      
-    console.log('this.taskRegistry!!', this.taskRegistry.createTask);
-    
-
-    try {
-      const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
-      console.log('promise:', tx);
-    } catch (error) {
-      console.error('Error creating task:', error);
-    }
     // tx.then((tx) => console.log(tx));
     // return tx;
     // const receipt = await tx.wait();
@@ -159,6 +157,7 @@ export class AIAgentsSDK {
     //   throw new Error("Task creation failed: No task address in event");
     // }
     // return event.args.task;
+    return '';
   }
 
   async assignTask(taskAddress: string, agentAddress: string): Promise<void> {

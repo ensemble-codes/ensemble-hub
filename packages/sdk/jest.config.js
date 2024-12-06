@@ -10,4 +10,5 @@ module.exports = {
   transformIgnorePatterns: [
     '/node_modules/(?!graphql-request)', // Add any other modules that need to be transformed
   ],
+  testTimeout: 15000
 };

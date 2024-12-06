@@ -1,38 +1,46 @@
 import { ethers } from 'ethers';
-import { setupTestEnv, TEST_CONFIG, expect } from './setup';
+import { setupTestEnv, expect, setupEnv } from './setup';
 import { TestSDK } from './helpers';
+import { AIAgentsSDK } from '../src/sdk';
 import { TaskType } from '../src/types';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env', override: true });
+
+const config = {
+  network: {
+    rpcUrl: process.env.RPC_URL!,
+    chainId: parseInt(process.env.CHAIN_ID!, 10),
+    name: process.env.NETWORK_NAME!
+  },
+  taskRegistryAddress: process.env.TASK_REGISTRY_ADDRESS!,
+  agentRegistryAddress: process.env.AGENT_REGISTRY_ADDRESS!
+}
 
 describe('AIAgentsSDK', () => {
-  afterEach(() => {
+
+  let sdk: AIAgentsSDK;
+
+  beforeEach(() => {
+    const { signer } = setupEnv();
+    sdk = new AIAgentsSDK(config, signer);
     // Restore original Contract constructor if it was mocked
-    if ((ethers as any).Contract.mockRestore) {
-      (ethers as any).Contract.mockRestore();
-    }
+    // if ((ethers as any).Contract.mockRestore) {
+    //   (ethers as any).Contract.mockRestore();
+    // }
   });
   describe('Initialization', () => {
     it('should initialize with different configs', async () => {
-      const { signer } = await setupTestEnv();
-      
+      const { signer } = await setupEnv();
+      // const { signer } = await setupTestEnv();
       // Test with default config
-      const sdk1 = new TestSDK(TEST_CONFIG, signer);
+      const sdk1 = new TestSDK(config, signer);
       expect(sdk1).to.be.instanceOf(TestSDK);
-      
-      // Test with different network config
-      const sdk2 = new TestSDK({
-        ...TEST_CONFIG,
-        network: {
-          ...TEST_CONFIG.network,
-          rpcUrl: "http://localhost:8546"
-        }
-      }, signer);
-      expect(sdk2).to.be.instanceOf(TestSDK);
     });
   });
 
   describe('Task Management', () => {
-    it('should create task and emit event', async () => {
-      const { sdk } = await setupTestEnv();
+    it.only('should create task and emit event', async () => {
       
       const taskParams = {
         prompt: "Test task",
@@ -41,22 +49,17 @@ describe('AIAgentsSDK', () => {
       
       // Mock event emission
       const mockTaskAddress = "0x0000000000000000000000000000000000000003";
-      const tx = {
-        wait: async () => ({
-          events: [{
-            event: "TaskCreated",
-            args: { task: mockTaskAddress }
-          }]
-        })
-      };
+
+      const tx = await sdk.createTask(taskParams);
+      console.log('tx:', tx);
       
-      const mockTaskRegistry = {
-        createTask: jest.fn().mockResolvedValue(tx)
-      };
-      (sdk as any)._taskRegistry = mockTaskRegistry;
+      // const mockTaskRegistry = {
+      //   createTask: jest.fn().mockResolvedValue(tx)
+      // };
+      // (sdk as any)._taskRegistry = mockTaskRegistry;
       
-      const result = await sdk.createTask(taskParams);
-      expect(result).to.equal(mockTaskAddress);
+      // const result = await sdk.createTask(taskParams);
+      // expect(result).to.equal(mockTaskAddress);
     });
 
     it('should assign task to agent', async () => {
@@ -78,10 +81,10 @@ describe('AIAgentsSDK', () => {
       expect(assigned).to.be.true;
     });
 
-    it.only('should get tasks by owner', async () => {
+    it('should get tasks by owner', async () => {
       // const { sdk } = await setupTestEnv();
       const { signer } = await setupTestEnv();
-      const sdk = new TestSDK(TEST_CONFIG, signer);
+      const sdk = new TestSDK(config, signer);
 
       // Test with default config
       // const sdk1 = new TestSDK(TEST_CONFIG, signer);

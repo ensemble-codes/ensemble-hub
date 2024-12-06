@@ -6,17 +6,17 @@ import { TestSDK } from './helpers';
 import { jest } from '@jest/globals';
 
 // Enable Jest mocking
-jest.mock('ethers', () => ({
-  ethers: {
-    Contract: jest.fn(),
-    JsonRpcProvider: jest.fn().mockImplementation(() => ({
-      getNetwork: () => Promise.resolve({ chainId: BigInt(1337) })
-    })),
-    Wallet: jest.fn().mockImplementation(() => ({
-      connect: jest.fn()
-    }))
-  }
-}));
+// jest.mock('ethers', () => ({
+//   ethers: {
+//     Contract: jest.fn(),
+//     JsonRpcProvider: jest.fn().mockImplementation(() => ({
+//       getNetwork: () => Promise.resolve({ chainId: BigInt(1337) })
+//     })),
+//     Wallet: jest.fn().mockImplementation(() => ({
+//       connect: jest.fn()
+//     }))
+//   }
+// }));
 
 // Test configuration
 export const TEST_CONFIG = {
@@ -38,6 +38,19 @@ export class MockProvider {
   async getCode() {
     return "0x";
   }
+}
+
+
+export const setupEnv = () => {
+
+
+  const provider = new ethers.JsonRpcProvider(process.env.RPC_URL!);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
+
+  return {
+    provider,
+    signer: wallet
+  };
 }
 
 // Test fixture
