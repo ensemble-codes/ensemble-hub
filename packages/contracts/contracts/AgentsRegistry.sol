@@ -23,7 +23,13 @@ contract AgentsRegistry is Ownable {
     
     event AgentRegistered(address indexed agent, string model);
     event ReputationUpdated(address indexed agent, uint256 newReputation);
-
+    /**
+     * @dev Registers a new agent with the given model, prompt, and skills.
+     * @param model The model of the agent.
+     * @param prompt The prompt for the agent.
+     * @param skillNames The names of the skills the agent possesses.
+     * @return The address of the registered agent.
+     */
     function registerAgent(
         string memory model,
         string memory prompt,
