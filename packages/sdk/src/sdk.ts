@@ -22,8 +22,8 @@ import AgentRegistryABI from './abi/AgentsRegistry.abi.json';
 
 export class AIAgentsSDK {
   protected provider: ethers.Provider;
-  protected taskRegistry: TaskRegistryContract;
-  protected agentRegistry: AgentRegistryContract;
+  protected taskRegistry: ethers.Contract;
+  protected agentRegistry: ethers.Contract;
   protected chainId: number;
   protected pubsub: PubSub;
   protected signer: ethers.Wallet;
@@ -47,21 +47,16 @@ export class AIAgentsSDK {
       config.taskRegistryAddress,
       TaskRegistryABI,
       this.signer
-    ) as unknown as TaskRegistryContract;
+    );
     
     // console.log('this.taskRegistry.runner:', this.taskRegistry.runner);
     // console.log('this.taskRegistry.signer:', this.taskRegistry.signer);
-
-    const taskRegistryWithSigner = this.taskRegistry.connect(this.signer);
-
-    // console.log('taskRegistryWithSigner.runner:', taskRegistryWithSigner.runner);
-    // console.log('taskRegistryWithSigner.signer:', taskRegistryWithSigner.signer);
 
     this.agentRegistry = new ethers.Contract(
       config.agentRegistryAddress,
       AgentRegistryABI,
       this.signer
-    ) as unknown as AgentRegistryContract;
+    );
 
     this.pubsub = new PubSub({projectId: 'projects/ensemble-ai-443111/topics/ensemble-tasks'});
 
@@ -104,6 +99,10 @@ export class AIAgentsSDK {
     subscription.on('message', messageHandler);
   }
 
+  async getWalletAddress(): Promise<string> {
+    return this.signer.getAddress();
+  }
+
   async getTasksByStatus(owner: string, status: TaskStatus): Promise<string[]> {
     // const myQuery = gql`
     //   query {
@@ -127,21 +126,35 @@ export class AIAgentsSDK {
 
 
   // Task Management Methods
-  async createTask(params: TaskCreationParams): Promise<string> {
+  async createTask(params: TaskCreationParams): Promise<bigint> {
     console.log("Signer address:", await this.signer.getAddress());
-    console.log("Signer provider:", this.signer.provider);
     
     const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
-    console.log('tx:', tx);
+    console.log('tx hash:', tx.hash);
     const receipt = await tx.wait();
-    console.log('receipt:', receipt);
-    console.log('receipt.events:', receipt.events);
-    console.log('receipt.logs', receipt.logs);
-    const event = receipt.events?.find((e: { event: string }) => e.event === "TaskCreated");
-    if (!event?.args?.task) {
+    // console.log('receipt:', receipt);
+    // console.log('receipt.events:', receipt.events);
+    // console.log('receipt.logs', receipt.logs);
+    
+    const events = receipt.logs.map((log: any) => {
+      // console.log('log:', log);
+      try {
+        const event = this.taskRegistry.interface.parseLog(log);
+        // console.log('event:', event);
+        return event;
+      } catch (e) {
+        console.error('error:', e);
+        return null;
+      }
+    }).filter((event: any) => event !== null);
+
+    const event = events?.find((e: { name: string }) => e.name === "TaskCreated");
+    if (!event?.args?.[1]) {
       throw new Error("Task creation failed: No task address in event");
     }
-    return event.args.task;
+    console.log('event:', event);
+    console.log('event.args.task:', event.args[1]);
+    return event.args[1];
 
     // try {
     //   const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
@@ -157,7 +170,7 @@ export class AIAgentsSDK {
     //   throw new Error("Task creation failed: No task address in event");
     // }
     // return event.args.task;
-    return '';
+    // return '';
   }
 
   async assignTask(taskAddress: string, agentAddress: string): Promise<void> {
@@ -179,14 +192,29 @@ export class AIAgentsSDK {
     const skillLevels = skills.map(s => s.level);
     
     const tx = await this.agentRegistry.registerAgent(model, prompt, skillNames, skillLevels);
+    console.log('tx hash:', tx.hash);
     const receipt = await tx.wait();
-    const event = receipt.events?.find(e => e.event === "AgentRegistered");
-    
-    if (!event?.args?.agent) {
+    console.log('receipt:', receipt);
+
+    const events = receipt.logs.map((log: any) => {
+      console.log('log:', log);
+      try {
+        const event = this.agentRegistry.interface.parseLog(log);
+        console.log('event:', event);
+        return event;
+      } catch (e) {
+        console.error('error:', e);
+        return null;
+      }
+    }).filter((event: any) => event !== null);
+
+    const event = events.find((e: { name: string }) => e.name === "AgentRegistered");
+    console.log('event:', event);
+    if (!event?.args) {
       throw new Error("Agent registration failed: No agent address in event");
     }
-    
-    return event.args.agent;
+    console.log('event.args:', event.args);
+    return event.args[0];
   }
 
   async getAgentData(agentAddress: string): Promise<AgentData> {
@@ -278,8 +306,8 @@ export class AIAgentsSDK {
   }
 
   // Utils
-  async connect(signer: ethers.Wallet | ethers.JsonRpcSigner): Promise<void> {
-    this.taskRegistry = this.taskRegistry.connect(signer) as TaskRegistryContract;
-    this.agentRegistry = this.agentRegistry.connect(signer) as AgentRegistryContract;
-  }
+  // async connect(signer: ethers.Wallet | ethers.JsonRpcSigner): Promise<void> {
+  //   this.taskRegistry = this.taskRegistry.connect(signer) as TaskRegistryContract;
+  //   this.agentRegistry = this.agentRegistry.connect(signer) as AgentRegistryContract;
+  // }
 }

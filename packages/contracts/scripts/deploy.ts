@@ -7,10 +7,10 @@ async function main() {
   console.log(`Deployer address: ${deployer.address}`);
 
   const { agentsRegistry } = await hre.ignition.deploy(AgentsRegistry);
-  console.log(`AgentsRegistry deployed to: ${await agentsRegistry.getAddress()}`);
+  console.log(`AGENT_REGISTRY_ADDRESS=${await agentsRegistry.getAddress()}`);
 
   const { taskRegistry } = await hre.ignition.deploy(TaskRegistry);
-  console.log(`TaskRegistry deployed to: ${await taskRegistry.getAddress()}`);
+  console.log(`TASK_REGISTRY_ADDRESS=${await taskRegistry.getAddress()}`);
 
   const simpleTask = await taskRegistry.createTask(
     "Do X for me",

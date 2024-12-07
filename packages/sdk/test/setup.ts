@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import { TestSDK } from './helpers';
+// import { TestSDK } from './helpers';
 
 import { jest } from '@jest/globals';
 
@@ -22,7 +22,7 @@ import { jest } from '@jest/globals';
 export const TEST_CONFIG = {
   network: {
     rpcUrl: "http://127.0.0.1:8545",
-    chainId: 31337,
+    chainId: 1337,
     name: "hardhat"
   },
   taskRegistryAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
@@ -32,7 +32,7 @@ export const TEST_CONFIG = {
 // Mock Provider Class
 export class MockProvider {
   async getNetwork() {
-    return { chainId: BigInt(31337) };
+    return { chainId: BigInt(1337) };
   }
 
   async getCode() {
@@ -55,40 +55,40 @@ export const setupEnv = () => {
 
 // Test fixture
 export const setupTestEnv = async () => {
-  const provider = new MockProvider();
-  const wallet = new ethers.Wallet(
-    "0x0123456789012345678901234567890123456789012345678901234567890123",
-    provider as any
-  );
+  // const provider = new MockProvider();
+  // const wallet = new ethers.Wallet(
+  //   "0x0123456789012345678901234567890123456789012345678901234567890123",
+  //   provider as any
+  // );
   
-  // Mock ethers.Contract
-  const mockTaskRegistry = {
-    createTask: jest.fn(),
-    assignAgent: jest.fn(),
-    getTasksByOwner: jest.fn(),
-  };
+  // // Mock ethers.Contract
+  // const mockTaskRegistry = {
+  //   createTask: jest.fn(),
+  //   assignAgent: jest.fn(),
+  //   getTasksByOwner: jest.fn(),
+  // };
 
-  const mockAgentRegistry = {
-    registerAgent: jest.fn(),
-    getReputation: jest.fn(),
-    getSkills: jest.fn(),
-  };
+  // const mockAgentRegistry = {
+  //   registerAgent: jest.fn(),
+  //   getReputation: jest.fn(),
+  //   getSkills: jest.fn(),
+  // };
 
-  (ethers.Contract as jest.Mock).mockImplementation((address, abi, signerOrProvider) => {
-    if (address === TEST_CONFIG.taskRegistryAddress) return mockTaskRegistry;
-    if (address === TEST_CONFIG.agentRegistryAddress) return mockAgentRegistry;
-    return {};
-  });
+  // (ethers.Contract as jest.Mock).mockImplementation((address, abi, signerOrProvider) => {
+  //   if (address === TEST_CONFIG.taskRegistryAddress) return mockTaskRegistry;
+  //   if (address === TEST_CONFIG.agentRegistryAddress) return mockAgentRegistry;
+  //   return {};
+  // });
 
-  const sdk = new TestSDK(TEST_CONFIG, wallet as any);
+  // const sdk = new TestSDK(TEST_CONFIG, wallet as any);
   
-  return {
-    provider,
-    signer: wallet,
-    sdk,
-    mockTaskRegistry,
-    mockAgentRegistry
-  };
+  // return {
+  //   provider,
+  //   signer: wallet,
+  //   sdk,
+  //   mockTaskRegistry,
+  //   mockAgentRegistry
+  // };
 };
 
 // Setup global Jest mocks

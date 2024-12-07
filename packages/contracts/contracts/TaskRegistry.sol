@@ -14,7 +14,15 @@
             address owner;
             TaskStatus status;
             address assignee;
+            ProposalData proposal;
             mapping(address => bool) permissions;
+        }
+
+        struct ProposalData {
+            uint256 id;
+            uint256 price;
+            uint256 taskId;
+            address agent;
         }
         
         mapping(uint256 => TaskData) public tasks;
@@ -27,7 +35,8 @@
         event TaskStatusChanged(uint256 indexed taskId, TaskStatus status);
         event TaskAssigned(uint256 indexed taskId, address indexed agent);
         event PermissionUpdated(uint256 indexed taskId, address indexed user, bool allowed);
-
+        event ProposalApproved(uint256 indexed taskId, ProposalData proposal);
+        event TaskCompleted(uint256 indexed taskId, string result);
         function createTask(
             string memory prompt,
             TaskType taskType
@@ -54,17 +63,29 @@
             emit PermissionUpdated(taskId, user, allowed);
         }
 
-        function assignTo(uint256 taskId, address _assignee) external {
+        function approveProposal(uint256 taskId, ProposalData memory proposal) external {
             TaskData storage task = tasks[taskId];
             require(msg.sender == task.owner || task.permissions[msg.sender], "Not authorized");
             require(task.status == TaskStatus.CREATED, "Invalid task status");
             
-            task.assignee = _assignee;
+            task.proposal = proposal;
             task.status = TaskStatus.ASSIGNED;
-            
-            emit TaskAssigned(taskId, _assignee);
-            emit TaskStatusChanged(taskId, TaskStatus.ASSIGNED);
+            task.assignee = proposal.agent;
+
+            emit TaskStatusChanged(taskId, task.status);
+            emit ProposalApproved(taskId, proposal);
         }
+
+        function completeTask(uint256 taskId, string memory result) external {
+            TaskData storage task = tasks[taskId];
+            require(msg.sender == task.assignee, "Not authorized");
+            require(task.status == TaskStatus.ASSIGNED, "Invalid task status");
+
+            task.status = TaskStatus.COMPLETED;
+            emit TaskStatusChanged(taskId, task.status);
+            emit TaskCompleted(taskId, result);
+        }
+
 
         function getTasksByOwner(address owner) external view returns (uint256[] memory) {
             return ownerTasks[owner];

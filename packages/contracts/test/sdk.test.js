@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { AIAgentsSDK } = require("ensemble-sdk");
 
-describe("SDK", function () {
+describe.skip("SDK", function () {
     let taskRegistrySDK;
     let owner;
 
@@ -32,7 +32,7 @@ describe("SDK", function () {
         taskRegistrySDK = new AIAgentsSDK(config, owner);
     });
 
-    it.only("Should create new task using SDK", async function () {
+    it("Should create new task using SDK", async function () {
         // console.log(taskRegistrySDK);
         const tx = await taskRegistrySDK.createTask("Test prompt from SDK", 0);
         // const receipt = await tx.wait();

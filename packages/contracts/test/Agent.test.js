@@ -17,7 +17,7 @@ describe("Agent", function () {
         );
     });
 
-    it.only("Should set correct initial values", async function () {
+    it("Should set correct initial values", async function () {
         expect(await agent.model()).to.equal("GPT-4");
         expect(await agent.prompt()).to.equal("AI Assistant");
         expect(await agent.reputation()).to.equal(100);
