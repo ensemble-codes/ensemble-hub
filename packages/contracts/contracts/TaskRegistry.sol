@@ -37,6 +37,13 @@
         event PermissionUpdated(uint256 indexed taskId, address indexed user, bool allowed);
         event ProposalApproved(uint256 indexed taskId, ProposalData proposal);
         event TaskCompleted(uint256 indexed taskId, string result);
+
+        /**
+         * @dev Creates a new task with the given prompt and task type.
+         * @param prompt The description or prompt of the task.
+         * @param taskType The type of the task (SIMPLE, COMPLEX, COMPOSITE).
+         * @return taskId The ID of the newly created task.
+         */
         function createTask(
             string memory prompt,
             TaskType taskType
@@ -56,6 +63,12 @@
             return nextTaskId;
         }
 
+        /**
+         * @dev Sets the permission for a user to interact with a specific task.
+         * @param taskId The ID of the task.
+         * @param user The address of the user.
+         * @param allowed Boolean indicating whether the user is allowed or not.
+         */
         function setPermission(uint256 taskId, address user, bool allowed) external {
             TaskData storage task = tasks[taskId];
             require(msg.sender == task.owner, "Not authorized");
@@ -63,6 +76,11 @@
             emit PermissionUpdated(taskId, user, allowed);
         }
 
+        /**
+         * @dev Approves a proposal for a specific task.
+         * @param taskId The ID of the task.
+         * @param proposal The proposal data to be approved.
+         */
         function approveProposal(uint256 taskId, ProposalData memory proposal) external {
             TaskData storage task = tasks[taskId];
             require(msg.sender == task.owner || task.permissions[msg.sender], "Not authorized");
@@ -76,6 +94,11 @@
             emit ProposalApproved(taskId, proposal);
         }
 
+        /**
+         * @dev Completes a task with the given result.
+         * @param taskId The ID of the task.
+         * @param result The result or output of the completed task.
+         */
         function completeTask(uint256 taskId, string memory result) external {
             TaskData storage task = tasks[taskId];
             require(msg.sender == task.assignee, "Not authorized");
