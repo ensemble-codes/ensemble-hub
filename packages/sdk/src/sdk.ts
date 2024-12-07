@@ -6,8 +6,6 @@ import {
   ContractConfig, 
   TaskType, 
   TaskStatus,
-  TaskRegistryContract,
-  AgentRegistryContract,
   TaskConnectorContract
 } from "./types";
 import { execute } from '../.graphclient'
@@ -189,9 +187,8 @@ export class AIAgentsSDK {
     skills: { name: string; level: number }[]
   ): Promise<string> {
     const skillNames = skills.map(s => s.name);
-    const skillLevels = skills.map(s => s.level);
     
-    const tx = await this.agentRegistry.registerAgent(model, prompt, skillNames, skillLevels);
+    const tx = await this.agentRegistry.registerAgent(model, prompt, skillNames);
     console.log('tx hash:', tx.hash);
     const receipt = await tx.wait();
     console.log('receipt:', receipt);
@@ -307,7 +304,7 @@ export class AIAgentsSDK {
 
   // Utils
   // async connect(signer: ethers.Wallet | ethers.JsonRpcSigner): Promise<void> {
-  //   this.taskRegistry = this.taskRegistry.connect(signer) as TaskRegistryContract;
-  //   this.agentRegistry = this.agentRegistry.connect(signer) as AgentRegistryContract;
+  //   this.taskRegistry = this.taskRegistry.connect(signer);
+  //   this.agentRegistry = this.agentRegistry.connect(signer);
   // }
 }

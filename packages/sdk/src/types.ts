@@ -11,37 +11,6 @@ export interface AgentAssignedEvent {
   agent: string;
 }
 
-export interface TaskRegistryContract extends BaseContract {
-  createTask(prompt: string, taskType: TaskType): Promise<{
-    wait(): Promise<{ events: Array<{ event: string; args: TaskCreatedEvent }> }>;
-  }>;
-  assignTo(taskAddress: string, agentAddress: string): Promise<{
-    wait(): Promise<{ events: Array<{ event: string; args: AgentAssignedEvent }> }>;
-  }>;
-  setPermission(taskAddress: string, user: string, allowed: boolean): Promise<{
-    wait(): Promise<void>;
-  }>;
-  getTasksByOwner(ownerAddress: string): Promise<string[]>;
-  getStatus(taskAddress: string): Promise<TaskStatus>;
-  getAssignee(taskAddress: string): Promise<string>;
-  tasks(taskAddress: string): Promise<[string, number, string, number, string]>; // [prompt, taskType, owner, status, assignee]
-}
-
-export interface AgentRegistryContract extends BaseContract {
-  registerAgent(
-    model: string,
-    prompt: string,
-    skillNames: string[],
-    skillLevels: number[]
-  ): Promise<{ wait(): Promise<{ events: Array<{ event: string; args: { agent: string; model: string } }> }> }>;
-  updateReputation(reputation: BigNumberish): Promise<any>;
-  getSkills(): Promise<Skill[]>;
-  getReputation(): Promise<bigint>;
-  addSkill(name: string, level: number): Promise<any>;
-  isRegistered(agent: string): Promise<boolean>;
-  getAgentData(agent: string): Promise<[string, string, Skill[], BigNumberish]>;
-}
-
 export interface TaskConnectorContract extends BaseContract {
   execute(data: string, target: string, value: BigNumberish): Promise<{
     wait(): Promise<{ events: Array<{ event: string; args: { taskId: BigNumberish; success: boolean } }> }>;

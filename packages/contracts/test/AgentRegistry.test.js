@@ -16,8 +16,7 @@ describe("AgentRegistry", function () {
         const tx = await registry.registerAgent(
             "GPT-4",
             "AI Assistant",
-            ["coding", "writing"],
-            [90, 85]
+            ["coding", "writing"]
         );
         const receipt = await tx.wait();
         const events = receipt.logs.map(log => {

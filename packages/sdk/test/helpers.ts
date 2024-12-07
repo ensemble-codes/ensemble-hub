@@ -1,6 +1,6 @@
 import { AIAgentsSDK } from '../src/sdk';
 import { ethers } from 'ethers';
-import { ContractConfig, TaskRegistryContract, AgentRegistryContract } from '../src/types';
+import { ContractConfig } from '../src/types';
 
 // Test helper class to access protected members
 export class TestSDK extends AIAgentsSDK {
@@ -9,19 +9,11 @@ export class TestSDK extends AIAgentsSDK {
   }
 
   // Expose protected members for testing
-  get testTaskRegistry(): TaskRegistryContract {
+  get testTaskRegistry(): ethers.Contract {
     return this.taskRegistry;
   }
 
-  get testAgentRegistry(): AgentRegistryContract {
+  get testAgentRegistry(): ethers.Contract {
     return this.agentRegistry;
-  }
-
-  // Mock contract creation helper
-  setMockTaskContract(address: string, mockContract: any): void {
-    (ethers.Contract as jest.Mock).mockImplementation((addr) => {
-      if (addr === address) return mockContract;
-      return this.testTaskRegistry;
-    });
   }
 }

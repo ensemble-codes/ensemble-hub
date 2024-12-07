@@ -97,8 +97,8 @@ describe('AIAgentsSDK', () => {
       model: "gpt-4",
       prompt: "You are a crypto analyzer agent",
       skills: [
-        { name: "analyzing stables", level: 1 },
-        { name: "analyzing memes", level: 2 }
+        { name: "analyzing stables" },
+        { name: "analyzing memes" }
       ]
     };
     it('should register agent', async () => {      
