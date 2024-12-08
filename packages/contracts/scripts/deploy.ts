@@ -12,20 +12,20 @@ async function main() {
   const { taskRegistry } = await hre.ignition.deploy(TaskRegistry);
   console.log(`TASK_REGISTRY_ADDRESS=${await taskRegistry.getAddress()}`);
 
-  const simpleTask = await taskRegistry.createTask(
-    "Do X for me",
-    0
-  );
-  console.log(`first task created in tx: ${simpleTask.hash}`);
+  // const simpleTask = await taskRegistry.createTask(
+  //   "Do X for me",
+  //   0
+  // );
+  // console.log(`first task created in tx: ${simpleTask.hash}`);
 
-  const secondTask = await taskRegistry.createTask(
-    "Do Y for me",
-    0
-  );
-  console.log(`second task created in tx: ${secondTask.hash}`);
+  // const secondTask = await taskRegistry.createTask(
+  //   "Do Y for me",
+  //   0
+  // );
+  // console.log(`second task created in tx: ${secondTask.hash}`);
 
-  const tasks = await taskRegistry.getTasksByOwner(deployer.address);
-  console.log(tasks);
+  // const tasks = await taskRegistry.getTasksByOwner(deployer.address);
+  // console.log(tasks);
 }
 
 main().catch(console.error);

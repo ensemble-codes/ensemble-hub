@@ -171,10 +171,6 @@ export class AIAgentsSDK {
     // return '';
   }
 
-  async assignTask(taskAddress: string, agentAddress: string): Promise<void> {
-    const tx = await this.taskRegistry.assignTo(taskAddress, agentAddress);
-    await tx.wait();
-  }
 
   async getTasksByOwner(ownerAddress: string): Promise<string[]> {
     return this.taskRegistry.getTasksByOwner(ownerAddress);
@@ -184,11 +180,10 @@ export class AIAgentsSDK {
   async registerAgent(
     model: string,
     prompt: string,
-    skills: { name: string; level: number }[]
+    skills: string[]
   ): Promise<string> {
-    const skillNames = skills.map(s => s.name);
     
-    const tx = await this.agentRegistry.registerAgent(model, prompt, skillNames);
+    const tx = await this.agentRegistry.registerAgent(model, prompt, skills);
     console.log('tx hash:', tx.hash);
     const receipt = await tx.wait();
     console.log('receipt:', receipt);
@@ -243,10 +238,11 @@ export class AIAgentsSDK {
   }
 
   // Task Instance Methods
-  async getTaskData(taskAddress: string): Promise<TaskData> {
-    const [prompt, taskType, owner, status, assignee] = await this.taskRegistry.tasks(taskAddress);
+  async getTaskData(taskId: string): Promise<TaskData> {
+    const [id, prompt, taskType, owner, status, assignee] = await this.taskRegistry.tasks(taskId);
 
     return {
+      id,
       prompt,
       taskType,
       assignee: assignee || undefined,
@@ -255,6 +251,7 @@ export class AIAgentsSDK {
     };
   }
 
+  //
   async executeTask(
     taskAddress: string, 
     data: string, 
@@ -281,6 +278,26 @@ export class AIAgentsSDK {
       await tx.wait();
     } catch (error) {
       console.error("Setting task permission failed:", error);
+      throw error;
+    }
+  }
+
+  async approveProposal(taskId: BigNumberish, proposal: { id: BigNumberish; price: BigNumberish; taskId: BigNumberish; agent: string }): Promise<void> {
+    try {
+      const tx = await this.taskRegistry.approveProposal(taskId, proposal);
+      await tx.wait();
+    } catch (error) {
+      console.error("Approving proposal failed:", error);
+      throw error;
+    }
+  }
+
+  async completeTask(taskId: BigNumberish, result: string): Promise<void> {
+    try {
+      const tx = await this.taskRegistry.completeTask(taskId, result);
+      await tx.wait();
+    } catch (error) {
+      console.error("Completing task failed:", error);
       throw error;
     }
   }

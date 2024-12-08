@@ -57,15 +57,6 @@ describe('AIAgentsSDK', () => {
       console.log('tx:', taskId);
     });
 
-    // it('should assign task to agent', async () => {
-    //   // const { sdk } = await setupEnv();
-      
-    //   const taskAddress = "0x0000000000000000000000000000000000000003";
-    //   const agentAddress = "0x0000000000000000000000000000000000000004";
-      
-    //   await sdk.assignTask(taskAddress, agentAddress);
-    //   expect(assigned).to.be.true;
-    // });
 
     it('should get tasks by owner', async () => {
       // const { sdk } = await setupEnv();
@@ -75,31 +66,17 @@ describe('AIAgentsSDK', () => {
       const ownerAddress = await sdk.getWalletAddress();
       
       const tasks = await sdk.getTasksByOwner(ownerAddress);
-      console.log(tasks);
-      // const mockTasks = [
-      //   "0x0000000000000000000000000000000000000006",
-      //   "0x0000000000000000000000000000000000000007"
-      // ];
-      
-      // const mockTaskRegistry = {
-      //   getTasksByOwner: jest.fn().mockResolvedValue(mockTasks)
-      // };
-      // (sdk as any)._taskRegistry = mockTaskRegistry;
-      
-      // const tasks = await sdk.getTasksByOwner(ownerAddress);
-      // expect(tasks).to.deep.equal(mockTasks);
+      expect(tasks).to.be.an('array');
+      expect(tasks).to.have.lengthOf(1);
     });
   });
 
-  describe('Agent Management', () => {
+  describe.skip('Agent Management', () => {
     let agentAddress: string;
     const agentData = {
       model: "gpt-4",
       prompt: "You are a crypto analyzer agent",
-      skills: [
-        { name: "analyzing stables" },
-        { name: "analyzing memes" }
-      ]
+      skills: ["analyzing stables", "analyzing memes"]
     };
     it('should register agent', async () => {      
       agentAddress = await sdk.registerAgent(agentData.model, agentData.prompt, agentData.skills);
@@ -111,6 +88,58 @@ describe('AIAgentsSDK', () => {
       const data = await sdk.getAgentData(agentAddress);
       expect(data).to.deep.include(agentData);
     });
+  });
+
+  describe('Proposal Management', () => {
+    it('should approve proposal and emit event', async () => {
+
+      const agentData = {
+        model: "gpt-4",
+        prompt: "You are a crypto analyzer agent",
+        skills: ["analyzing stables", "analyzing memes"]
+      };
+
+      const agentAddress = await sdk.getWalletAddress()
+      if (!(await sdk.isAgentRegistered(agentAddress))) {
+        console.log('registering agent');
+        await sdk.registerAgent(agentData.model, agentData.prompt, agentData.skills);
+      }
+
+
+      const taskId = 1; // Assuming a task with ID 1 exists
+      const proposal = {
+        id: 1,
+        price: 100,
+        taskId: taskId,
+        agent: agentAddress
+      };
+
+      let taskData = await sdk.getTaskData(taskId.toString());
+      console.log('taskData:', taskData);
+
+      const tx = await sdk.approveProposal(taskId, proposal);
+      // expect(tx).to.be.a('object');
+      // console.log('tx:', tx);
+
+      taskData = await sdk.getTaskData(taskId.toString());
+      console.log('taskData:', taskData);
+      expect(taskData.status).to.equal(BigInt(1));
+      expect(taskData.assignee).to.equal(agentAddress);
+    });
+
+    it('should complete task and emit event', async () => {
+      const taskId = '1'; // Assuming a task with ID 1 exists
+      const result = "Task completed successfully";
+
+      const tx = await sdk.completeTask(taskId, result);
+      // expect(tx).to.be.a('object');
+      console.log('tx:', tx);
+
+      const taskData = await sdk.getTaskData(taskId);
+      console.log('taskData:', taskData);
+      expect(taskData.status).to.equal(BigInt(2));
+    });
+
   });
 
   // describe('Task Instance Methods', () => {

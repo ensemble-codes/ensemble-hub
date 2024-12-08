@@ -267,11 +267,6 @@
         "internalType": "string[]",
         "name": "skillNames",
         "type": "string[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "skillLevels",
-        "type": "uint256[]"
       }
     ],
     "name": "registerAgent",

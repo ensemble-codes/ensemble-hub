@@ -31,6 +31,7 @@ export enum TaskStatus {
 }
 
 export interface TaskData {
+  id: string;
   prompt: string;
   taskType: TaskType;
   assignee?: string;

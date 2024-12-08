@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 import { expect } from 'chai';
 import { ethers } from 'ethers';
+
 // import { TestSDK } from './helpers';
 
 import { jest } from '@jest/globals';
@@ -41,9 +42,10 @@ export class MockProvider {
 }
 
 
-export const setupEnv = () => {
-
-
+export const setupEnv = (type = 'user') => {
+  // const signers = hre.ethers.getSigners();
+  // console.log('signers', signers);
+  // console.log(hre.ethers);
   const provider = new ethers.JsonRpcProvider(process.env.RPC_URL!);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
 

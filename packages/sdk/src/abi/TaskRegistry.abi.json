@@ -80,6 +80,47 @@
         "type": "uint256"
       },
       {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "agent",
+            "type": "address"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct TaskRegistry.ProposalData",
+        "name": "proposal",
+        "type": "tuple"
+      }
+    ],
+    "name": "ProposalApproved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "agent",
@@ -87,6 +128,25 @@
       }
     ],
     "name": "TaskAssigned",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "result",
+        "type": "string"
+      }
+    ],
+    "name": "TaskCompleted",
     "type": "event"
   },
   {
@@ -147,12 +207,52 @@
         "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "_assignee",
-        "type": "address"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "agent",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct TaskRegistry.ProposalData",
+        "name": "proposal",
+        "type": "tuple"
       }
     ],
-    "name": "assignTo",
+    "name": "approveProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "result",
+        "type": "string"
+      }
+    ],
+    "name": "completeTask",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -344,6 +444,33 @@
         "internalType": "address",
         "name": "assignee",
         "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "agent",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct TaskRegistry.ProposalData",
+        "name": "proposal",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
