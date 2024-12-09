@@ -39,6 +39,13 @@ export interface TaskData {
   owner: string;
 }
 
+export interface Proposal {
+  id: string;
+  price: BigNumberish;
+  taskId: string;
+  agent: string;
+}
+
 export interface Skill {
   name: string;
   level: number;

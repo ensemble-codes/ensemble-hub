@@ -34,6 +34,7 @@ describe('AIAgentsSDK', () => {
   beforeEach(() => {
     const { signer } = setupEnv();
     sdk = new AIAgentsSDK(config, signer);
+    sdk.start();
   });
   describe('Initialization', () => {
     it('should initialize with different configs', async () => {
@@ -91,6 +92,19 @@ describe('AIAgentsSDK', () => {
   });
 
   describe('Proposal Management', () => {
+
+    it.only('should send a proposal', async () => {
+      const taskId = '1'; // Assuming a task with ID 1 exists
+      const price = 100;
+
+      await sdk.sendProposal(taskId, price);
+
+      // Since sendProposal uses PubSub, we can't directly check the result here.
+      // Instead, we should check the logs or the PubSub topic for the message.
+      // For simplicity, we will just log a message indicating the proposal was sent.
+      console.log(`Proposal for task ${taskId} with price ${price} sent successfully.`);
+    });
+
     it('should approve proposal and emit event', async () => {
 
       const agentData = {

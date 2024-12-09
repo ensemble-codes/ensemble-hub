@@ -26,9 +26,10 @@ export class AIAgentsSDK {
   protected pubsub: PubSub;
   protected signer: ethers.Wallet;
   protected oneNewTask: (taskId: string) => void;
-  protected onTaskUpdated: (taskId: string) => void;
+  protected onNewProposal: (taskId: string) => void;
+  protected static topicName: string = 'projects/ensemble-ai-443111/topics/ensemble-tasks';
 
-  constructor(config: ContractConfig, signer: ethers.Wallet, oneNewTask: (taskId: string) => void = () => {}, onTaskUpdated: (taskId: string) => void = () => {}) {
+  constructor(config: ContractConfig, signer: ethers.Wallet, oneNewTask: () => void = () => {}, onNewProposal: () => void = () => {}) {
     console.log("Config:", config);
     console.log('config.network.rpcUrl:', config.network.rpcUrl);
     this.provider = new ethers.JsonRpcProvider(config.network.rpcUrl);
@@ -36,7 +37,7 @@ export class AIAgentsSDK {
     this.signer = signer;
     console.log('signersigner:', this.signer);
     this.oneNewTask = oneNewTask;
-    this.onTaskUpdated = onTaskUpdated;
+    this.onNewProposal = onNewProposal;
     // Validate network connection and chain ID
     this.validateNetwork();
 
@@ -56,28 +57,33 @@ export class AIAgentsSDK {
       this.signer
     );
 
-    this.pubsub = new PubSub({projectId: 'projects/ensemble-ai-443111/topics/ensemble-tasks'});
-
-    // // Creates a new topic
-    // const [topic] = await pubsub.createTopic(topicNameOrId);
-    // // console.log(`Topic ${topic.name} created.`);
-  
-    // // Creates a subscription on that new topic
-    // const [subscription] = await topic.createSubscription(`tasks: ${this.signer.address}`);
-  
-    // // Receive callbacks for new messages on the subscription
-    // subscription.on('message', message => {
-    //   console.log('Received message:', message.data.toString());
-    // });
+    this.pubsub = new PubSub({projectId: 'ensemble-ai-443111'});
   }
 
   async start() {
-    const topicNameOrId = 'projects/ensemble-ai-443111/topics/ensemble-tasks';
-    const subscriptionNameOrId = `tasks: ${this.signer.address}`;
+    this.subscribeToNewTasks();
+    this.subscribeToNewProposals();
+  }
+
+  private async subscribeToNewTasks() {
+    const filter = this.taskRegistry.filters.TaskCreated();
+
+    this.taskRegistry.on(filter, ({ args: [ owner, taskId, prompt, taskType ] }) => {
+      // console.log(owner);
+      console.log(`Owner: ${owner}
+        Task ID: ${taskId}
+        Prompt: ${prompt}
+        Task Type: ${taskType}`);
+      this.oneNewTask(taskId.toString());
+    });
+  }
+
+  private async subscribeToNewProposals() {
+    const subscriptionNameOrId = `tasks-${this.signer.address}`;
     // const timeout = 60;
 
     // Create a topic if it doesn't exist
-    const topic = this.pubsub.topic(topicNameOrId);
+    const topic = this.pubsub.topic(AIAgentsSDK.topicName);
     // Create a subscription to the topic
     const [subscription] = await topic.createSubscription(subscriptionNameOrId);
     console.log(`Subscription ${subscription.name} created.`);
@@ -112,9 +118,30 @@ export class AIAgentsSDK {
     // const result = await execute(myQuery, {})
     // console.log(result)
     // return result.tasks;
-  return new Promise<string[]>((resolve) => {
-    resolve([]);
-  });
+    return new Promise<string[]>((resolve) => {
+      resolve([]);
+    });
+  }
+
+  async sendProposal(taskId: string, price: BigNumberish): Promise<void> {
+    const pubsub = new PubSub();
+    const topicName = AIAgentsSDK.topicName;
+
+    const data = JSON.stringify({
+      taskId,
+      price: price.toString(),
+      agent: await this.getWalletAddress()
+    });
+
+    const dataBuffer = Buffer.from(data);
+
+    try {
+      await pubsub.topic(topicName).publishMessage({ data: dataBuffer });
+      console.log(`Proposal for task ${taskId} sent successfully.`);
+    } catch (error) {
+      console.error(`Failed to send proposal for task ${taskId}:`, error);
+      throw error;
+    }
   }
 
   async getProposals(taskId: string): Promise<string[]> {
