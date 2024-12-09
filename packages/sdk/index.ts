@@ -1,4 +1,4 @@
-export * from './src/sdk';
+export * from './src';
 export * from './src/types';
 
 // Re-export commonly used enums and types for convenience
@@ -13,4 +13,4 @@ export type {
 } from './src/types';
 
 // Export the main SDK class
-export { AIAgentsSDK } from './src/sdk';
+export { AIAgentsSDK } from './src';

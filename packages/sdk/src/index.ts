@@ -48,9 +48,6 @@ export class AIAgentsSDK {
       this.signer
     );
     
-    // console.log('this.taskRegistry.runner:', this.taskRegistry.runner);
-    // console.log('this.taskRegistry.signer:', this.taskRegistry.signer);
-
     this.agentRegistry = new ethers.Contract(
       config.agentRegistryAddress,
       AgentRegistryABI,
@@ -60,16 +57,21 @@ export class AIAgentsSDK {
     this.pubsub = new PubSub({projectId: 'ensemble-ai-443111'});
   }
 
+  /**
+   * Starts the SDK by subscribing to new tasks and proposals.
+   */
   async start() {
     this.subscribeToNewTasks();
     this.subscribeToNewProposals();
   }
 
+  /**
+   * Subscribes to new task creation events.
+   */
   private async subscribeToNewTasks() {
     const filter = this.taskRegistry.filters.TaskCreated();
 
     this.taskRegistry.on(filter, ({ args: [ owner, taskId, prompt, taskType ] }) => {
-      // console.log(owner);
       console.log(`Owner: ${owner}
         Task ID: ${taskId}
         Prompt: ${prompt}
@@ -78,9 +80,11 @@ export class AIAgentsSDK {
     });
   }
 
+  /**
+   * Subscribes to new proposals using Google PubSub.
+   */
   private async subscribeToNewProposals() {
     const subscriptionNameOrId = `tasks-${this.signer.address}`;
-    // const timeout = 60;
 
     // Create a topic if it doesn't exist
     const topic = this.pubsub.topic(AIAgentsSDK.topicName);
@@ -103,26 +107,32 @@ export class AIAgentsSDK {
     subscription.on('message', messageHandler);
   }
 
+  /**
+   * Gets the wallet address of the signer.
+   * @returns {Promise<string>} The wallet address.
+   */
   async getWalletAddress(): Promise<string> {
     return this.signer.getAddress();
   }
 
+  /**
+   * Gets tasks by status for a given owner.
+   * @param {string} owner - The owner's address.
+   * @param {TaskStatus} status - The status of the tasks to retrieve.
+   * @returns {Promise<string[]>} A promise that resolves to an array of task IDs.
+   */
   async getTasksByStatus(owner: string, status: TaskStatus): Promise<string[]> {
-    // const myQuery = gql`
-    //   query {
-    //     tasks(where: {owner: "${owner}", status: "${status}"}) {
-    //       id
-    //     }
-    //   }
-    //  `
-    // const result = await execute(myQuery, {})
-    // console.log(result)
-    // return result.tasks;
     return new Promise<string[]>((resolve) => {
       resolve([]);
     });
   }
-
+  
+  /**
+   * Sends a proposal for a task.
+   * @param {string} taskId - The ID of the task.
+   * @param {BigNumberish} price - The price of the proposal.
+   * @returns {Promise<void>} A promise that resolves when the proposal is sent.
+   */
   async sendProposal(taskId: string, price: BigNumberish): Promise<void> {
     const pubsub = new PubSub();
     const topicName = AIAgentsSDK.topicName;
@@ -144,28 +154,31 @@ export class AIAgentsSDK {
     }
   }
 
+  /**
+   * Gets proposals for a task.
+   * @param {string} taskId - The ID of the task.
+   * @returns {Promise<string[]>} A promise that resolves to an array of proposal IDs.
+   */
   async getProposals(taskId: string): Promise<string[]> {
     // USE PUBSUB
     return [];
   }
 
-
-  // Task Management Methods
+  /**
+   * Creates a new task.
+   * @param {TaskCreationParams} params - The parameters for task creation.
+   * @returns {Promise<bigint>} A promise that resolves to the task ID.
+   */
   async createTask(params: TaskCreationParams): Promise<bigint> {
     console.log("Signer address:", await this.signer.getAddress());
     
     const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
     console.log('tx hash:', tx.hash);
     const receipt = await tx.wait();
-    // console.log('receipt:', receipt);
-    // console.log('receipt.events:', receipt.events);
-    // console.log('receipt.logs', receipt.logs);
     
     const events = receipt.logs.map((log: any) => {
-      // console.log('log:', log);
       try {
         const event = this.taskRegistry.interface.parseLog(log);
-        // console.log('event:', event);
         return event;
       } catch (e) {
         console.error('error:', e);
@@ -177,33 +190,25 @@ export class AIAgentsSDK {
     if (!event?.args?.[1]) {
       throw new Error("Task creation failed: No task address in event");
     }
-    console.log('event:', event);
-    console.log('event.args.task:', event.args[1]);
     return event.args[1];
-
-    // try {
-    //   const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
-    //   console.log('promise:', tx);
-    // } catch (error) {
-    //   console.error('Error creating task:', error);
-    // }
-    // tx.then((tx) => console.log(tx));
-    // return tx;
-    // const receipt = await tx.wait();
-    // const event = receipt.events?.find((e: { event: string }) => e.event === "TaskCreated");
-    // if (!event?.args?.task) {
-    //   throw new Error("Task creation failed: No task address in event");
-    // }
-    // return event.args.task;
-    // return '';
   }
 
-
+  /**
+   * Gets tasks by owner address.
+   * @param {string} ownerAddress - The owner's address.
+   * @returns {Promise<string[]>} A promise that resolves to an array of task IDs.
+   */
   async getTasksByOwner(ownerAddress: string): Promise<string[]> {
     return this.taskRegistry.getTasksByOwner(ownerAddress);
   }
 
-  // Agent Management Methods
+  /**
+   * Registers a new agent.
+   * @param {string} model - The model of the agent.
+   * @param {string} prompt - The prompt for the agent.
+   * @param {string[]} skills - The skills of the agent.
+   * @returns {Promise<string>} A promise that resolves to the agent address.
+   */
   async registerAgent(
     model: string,
     prompt: string,
@@ -236,6 +241,11 @@ export class AIAgentsSDK {
     return event.args[0];
   }
 
+  /**
+   * Gets data for a specific agent.
+   * @param {string} agentAddress - The address of the agent.
+   * @returns {Promise<AgentData>} A promise that resolves to the agent data.
+   */
   async getAgentData(agentAddress: string): Promise<AgentData> {
     const [model, prompt, skills, reputation] = await this.agentRegistry.getAgentData(agentAddress);
     const isRegistered = await this.agentRegistry.isRegistered(agentAddress);
@@ -250,21 +260,41 @@ export class AIAgentsSDK {
     };
   }
 
+  /**
+   * Adds a skill to an agent.
+   * @param {string} name - The name of the skill.
+   * @param {number} level - The level of the skill.
+   * @returns {Promise<void>} A promise that resolves when the skill is added.
+   */
   async addAgentSkill(name: string, level: number): Promise<void> {
     const tx = await this.agentRegistry.addSkill(name, level);
     await tx.wait();
   }
 
+  /**
+   * Updates the reputation of an agent.
+   * @param {BigNumberish} reputation - The new reputation value.
+   * @returns {Promise<void>} A promise that resolves when the reputation is updated.
+   */
   async updateAgentReputation(reputation: BigNumberish): Promise<void> {
     const tx = await this.agentRegistry.updateReputation(reputation);
     await tx.wait();
   }
 
+  /**
+   * Checks if an agent is registered.
+   * @param {string} agentAddress - The address of the agent.
+   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the agent is registered.
+   */
   async isAgentRegistered(agentAddress: string): Promise<boolean> {
     return await this.agentRegistry.isRegistered(agentAddress);
   }
 
-  // Task Instance Methods
+  /**
+   * Gets data for a specific task.
+   * @param {string} taskId - The ID of the task.
+   * @returns {Promise<TaskData>} A promise that resolves to the task data.
+   */
   async getTaskData(taskId: string): Promise<TaskData> {
     const [id, prompt, taskType, owner, status, assignee] = await this.taskRegistry.tasks(taskId);
 
@@ -278,7 +308,14 @@ export class AIAgentsSDK {
     };
   }
 
-  //
+  /**
+   * Executes a task.
+   * @param {string} taskAddress - The address of the task.
+   * @param {string} data - The data to execute.
+   * @param {string} target - The target address.
+   * @param {BigNumberish} [value=0] - The value to send.
+   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the task was executed successfully.
+   */
   async executeTask(
     taskAddress: string, 
     data: string, 
@@ -299,6 +336,13 @@ export class AIAgentsSDK {
     }
   }
 
+  /**
+   * Sets permission for a task.
+   * @param {string} taskAddress - The address of the task.
+   * @param {string} user - The user address.
+   * @param {boolean} allowed - Whether the user is allowed.
+   * @returns {Promise<void>} A promise that resolves when the permission is set.
+   */
   async setTaskPermission(taskAddress: string, user: string, allowed: boolean): Promise<void> {
     try {
       const tx = await this.taskRegistry.setPermission(taskAddress, user, allowed);
@@ -309,6 +353,16 @@ export class AIAgentsSDK {
     }
   }
 
+  /**
+   * Approves a proposal for a task.
+   * @param {BigNumberish} taskId - The ID of the task.
+   * @param {Object} proposal - The proposal object.
+   * @param {BigNumberish} proposal.id - The ID of the proposal.
+   * @param {BigNumberish} proposal.price - The price of the proposal.
+   * @param {BigNumberish} proposal.taskId - The ID of the task.
+   * @param {string} proposal.agent - The agent address.
+   * @returns {Promise<void>} A promise that resolves when the proposal is approved.
+   */
   async approveProposal(taskId: BigNumberish, proposal: { id: BigNumberish; price: BigNumberish; taskId: BigNumberish; agent: string }): Promise<void> {
     try {
       const tx = await this.taskRegistry.approveProposal(taskId, proposal);
@@ -319,6 +373,12 @@ export class AIAgentsSDK {
     }
   }
 
+  /**
+   * Completes a task.
+   * @param {BigNumberish} taskId - The ID of the task.
+   * @param {string} result - The result of the task.
+   * @returns {Promise<void>} A promise that resolves when the task is completed.
+   */
   async completeTask(taskId: BigNumberish, result: string): Promise<void> {
     try {
       const tx = await this.taskRegistry.completeTask(taskId, result);
@@ -329,7 +389,11 @@ export class AIAgentsSDK {
     }
   }
 
-  // Network validation
+  /**
+   * Validates the network connection and chain ID.
+   * @private
+   * @returns {Promise<void>} A promise that resolves when the network is validated.
+   */
   private async validateNetwork(): Promise<void> {
     try {
       const network = await this.provider.getNetwork();
@@ -345,10 +409,4 @@ export class AIAgentsSDK {
       throw error;
     }
   }
-
-  // Utils
-  // async connect(signer: ethers.Wallet | ethers.JsonRpcSigner): Promise<void> {
-  //   this.taskRegistry = this.taskRegistry.connect(signer);
-  //   this.agentRegistry = this.agentRegistry.connect(signer);
-  // }
 }

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { expect } from './setup';
 // import { TestSDK } from './helpers';
-import { AIAgentsSDK } from '../src/sdk';
+import { AIAgentsSDK } from '../src';
 import { TaskType } from '../src/types';
 import dotenv from 'dotenv';
 
