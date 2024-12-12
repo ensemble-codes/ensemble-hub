@@ -45,10 +45,18 @@ export function usePersistentTasks() {
     updateTasks(updatedTasks)
   }
 
+  const updateTaskResponse = (taskId: number, response: string) => {
+    const updatedTasks = tasks.map(task =>
+      task.id === taskId ? { ...task, response } : task
+    )
+    updateTasks(updatedTasks)
+  }
+
   return {
     tasks,
     addTask,
-    updateTaskStatus
+    updateTaskStatus,
+    updateTaskResponse
   }
 }
 

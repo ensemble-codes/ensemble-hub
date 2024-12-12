@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Agent } from '../types'
 import { X } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Slider } from "@/components/ui/slider"
 
 interface AgentRegistrationDialogProps {
   isOpen: boolean
@@ -24,6 +26,8 @@ export default function AgentRegistrationDialog({
   const [expertise, setExpertise] = useState('')
   const [expertiseList, setExpertiseList] = useState<string[]>([])
   const [avatar, setAvatar] = useState('')
+  const [category, setCategory] = useState<Agent['category']>('DeFi')
+  const [reputation, setReputation] = useState(3)
 
   const handleAddExpertise = () => {
     if (expertise.trim() && !expertiseList.includes(expertise.trim())) {
@@ -43,12 +47,16 @@ export default function AgentRegistrationDialog({
         name: name.trim(),
         status: 'idle',
         expertise: expertiseList,
-        avatar
+        avatar,
+        category,
+        reputation
       })
       setName('')
       setExpertise('')
       setExpertiseList([])
       setAvatar('')
+      setCategory('DeFi')
+      setReputation(3)
       onClose()
     }
   }
@@ -80,6 +88,21 @@ export default function AgentRegistrationDialog({
               placeholder="Enter agent name"
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Select value={category} onValueChange={(value: Agent['category']) => setCategory(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="DeFi">DeFi</SelectItem>
+                <SelectItem value="Social">Social</SelectItem>
+                <SelectItem value="Analysis">Analysis</SelectItem>
+                <SelectItem value="Audit">Audit</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -116,6 +139,22 @@ export default function AgentRegistrationDialog({
                   {skill} <X className="h-3 w-3 ml-1" />
                 </Badge>
               ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="reputation">Initial Reputation</Label>
+            <div className="flex items-center space-x-4">
+              <Slider
+                id="reputation"
+                min={0}
+                max={5}
+                step={0.1}
+                value={[reputation]}
+                onValueChange={(value) => setReputation(value[0])}
+                className="flex-1"
+              />
+              <span className="font-medium">{reputation.toFixed(1)}</span>
             </div>
           </div>
 

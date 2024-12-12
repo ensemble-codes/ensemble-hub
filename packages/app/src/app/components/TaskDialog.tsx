@@ -16,10 +16,10 @@ interface TaskDialogProps {
 
 export default function TaskDialog({ isOpen, onClose, onConfirm, initialDescription }: TaskDialogProps) {
   const [taskType, setTaskType] = useState<string>('')
-  const [description, setDescription] = useState(initialDescription)
+//  const [description, setDescription] = useState(initialDescription)
 
   const handleConfirm = () => {
-    onConfirm(taskType, description)
+    onConfirm(taskType, initialDescription)
     onClose()
   }
 
@@ -45,12 +45,9 @@ export default function TaskDialog({ isOpen, onClose, onConfirm, initialDescript
           </div>
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="h-24"
-            />
+            <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+              {initialDescription}
+            </div>
           </div>
         </div>
         <DialogFooter>

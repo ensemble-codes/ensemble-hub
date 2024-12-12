@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import Navigation from './components/Navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,16 +15,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="flex flex-col min-h-screen">
-          <header className="bg-gray-800 text-white p-4">
-            <h1 className="text-2xl font-bold">Ensemble</h1>
-          </header>
-          <main className="flex-grow bg-gray-100">
-            {children}
-          </main>
-        </div>
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} flex flex-col h-full`}>
+        <header className="bg-gray-800 text-white">
+          <div className="container mx-auto px-4 py-2 flex flex-col items-center">
+            <h1 className="text-2xl font-bold mb-2">Ensemble</h1>
+            <Navigation />
+          </div>
+        </header>
+        <main className="flex-grow bg-gray-100 overflow-hidden">
+          {children}
+        </main>
       </body>
     </html>
   )

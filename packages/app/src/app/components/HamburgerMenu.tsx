@@ -20,12 +20,6 @@ export default function HamburgerMenu() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
           <a
-            href="#settings"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Settings
-          </a>
-          <a
             href="#tools"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
@@ -36,6 +30,12 @@ export default function HamburgerMenu() {
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
             Agents
+          </a>
+          <a
+            href="#control-center"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            Control Center
           </a>
         </div>
       )}
