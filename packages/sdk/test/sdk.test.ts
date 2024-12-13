@@ -1,7 +1,6 @@
 import { ethers } from 'ethers';
 import { expect } from './setup';
-// import { TestSDK } from './helpers';
-import { AIAgentsSDK } from '../src';
+import Ensemble from '../src';
 import { Proposal, TaskType } from '../src/types';
 import dotenv from 'dotenv';
 
@@ -21,7 +20,7 @@ export const setupEnv = (type: string = 'user') => {
 
 export const setupSdk = (type: string = 'user') => {
   const { signer } = setupEnv(type);
-  const sdk = new AIAgentsSDK(config, signer);
+  const sdk = new Ensemble(config, signer);
   sdk.start();
   return sdk;
 }
@@ -38,13 +37,13 @@ const config = {
   agentRegistryAddress: process.env.AGENT_REGISTRY_ADDRESS!
 }
 
-describe('AIAgentsSDK', () => {
+describe('Ensemble SDK', () => {
 
-  let sdk: AIAgentsSDK;
+  let sdk: Ensemble;
 
   beforeEach(async () => {
     const { signer } = await setupEnv();
-    sdk = new AIAgentsSDK(config, signer);
+    sdk = new Ensemble(config, signer);
     await sdk.start();
   });
 
@@ -52,16 +51,16 @@ describe('AIAgentsSDK', () => {
     sdk.stop();
   });
 
-  describe('Initialization', () => {
+  describe.only('Initialization', () => {
     it('should initialize with different configs', async () => {
       const { signer } = await setupEnv();
-      const sdk1 = new AIAgentsSDK(config, signer);
-      expect(sdk1).to.be.instanceOf(AIAgentsSDK);
+      const sdk1 = new Ensemble(config, signer);
+      expect(sdk1).to.be.instanceOf(Ensemble);
     });
   });
 
-  describe('Task Management', () => {
-    it.only('should create task and emit event', async () => {
+  describe.only('Task Management', () => {
+    it('should create task and emit event', async () => {
       
       const taskParams = {
         prompt: "Test task",
@@ -88,7 +87,7 @@ describe('AIAgentsSDK', () => {
     });
   });
 
-  describe.skip('Agent Management', () => {
+  describe.only('Agent Management', () => {
     let agentAddress: string;
     const agentData = {
       model: "gpt-4",
@@ -103,12 +102,12 @@ describe('AIAgentsSDK', () => {
 
     it('should get agent data', async () => {
       const data = await sdk.getAgentData(agentAddress);
-      expect(data).to.deep.include(agentData);
+      expect(data).to.deep.include({...agentData, skills: agentData.skills.map((skill: string) => [skill, BigInt(0)])});
     });
   });
 
-  describe('Proposal Management', () => {
-    let agentSdk: AIAgentsSDK;
+  describe.only('Proposal Management', () => {
+    let agentSdk: Ensemble;
     beforeEach(async () => {
       agentSdk = setupSdk('agent');
       // await sdk.start();
@@ -150,9 +149,9 @@ describe('AIAgentsSDK', () => {
       }
 
 
-      const taskId = 1; // Assuming a task with ID 1 exists
+      const taskId = '1'; // Assuming a task with ID 1 exists
       const proposal = {
-        id: 1,
+        id: '1',
         price: 100,
         taskId: taskId,
         agent: agentAddress
