@@ -13,7 +13,7 @@ export default function PromptInterface({ onSubmit, initialDescription }: Prompt
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (prompt.trim()) {
+    if (prompt && prompt.trim()) {
       setIsDialogOpen(true)
     }
   }
