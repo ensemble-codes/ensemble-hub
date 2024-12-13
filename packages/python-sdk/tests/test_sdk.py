@@ -3,7 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 from web3 import Web3
-from ..src.ensemble import Ensemble
+from src.ensemble import Ensemble
 from ..src.types import ContractConfig, Network
 
 load_dotenv()
