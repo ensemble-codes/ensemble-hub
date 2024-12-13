@@ -6,7 +6,8 @@ import {
   ContractConfig, 
   TaskType, 
   TaskStatus,
-  TaskConnectorContract
+  TaskConnectorContract,
+  Proposal
 } from "./types";
 import { execute } from '../.graphclient'
 import  {PubSub}  from '@google-cloud/pubsub';
@@ -26,10 +27,11 @@ export class AIAgentsSDK {
   protected pubsub: PubSub;
   protected signer: ethers.Wallet;
   protected oneNewTask: (taskId: string) => void;
-  protected onNewProposal: (taskId: string) => void;
+  protected onNewProposal: (proposal: Proposal) => void;
   protected static topicName: string = 'projects/ensemble-ai-443111/topics/ensemble-tasks';
+  protected subscription: any;
 
-  constructor(config: ContractConfig, signer: ethers.Wallet, oneNewTask: () => void = () => {}, onNewProposal: () => void = () => {}) {
+  constructor(config: ContractConfig, signer: ethers.Wallet, oneNewTask: () => void = () => {}, onNewProposal: (proposal: Proposal) => void = () => {}) {
     console.log("Config:", config);
     console.log('config.network.rpcUrl:', config.network.rpcUrl);
     this.provider = new ethers.JsonRpcProvider(config.network.rpcUrl);
@@ -58,11 +60,32 @@ export class AIAgentsSDK {
   }
 
   /**
+   * Sets the listener for new tasks.
+   * @param listener - The function to be called when a new task is created.
+   */
+  setOnNewTaskListener(listener: (taskId: string) => void) {
+    this.oneNewTask = listener;
+  }
+
+  /**
+   * Sets the listener for new proposals.
+   * @param listener - The function to be called when a new proposal is created.
+   */
+  setOnNewProposalListener(listener: (proposal: Proposal) => void) {
+    this.onNewProposal = listener;
+  }
+
+  /**
    * Starts the SDK by subscribing to new tasks and proposals.
    */
   async start() {
     this.subscribeToNewTasks();
-    this.subscribeToNewProposals();
+    await this.subscribeToNewProposals();
+  }
+
+  async stop() {
+    this.taskRegistry.removeAllListeners();
+    this.agentRegistry.removeAllListeners();
   }
 
   /**
@@ -88,23 +111,33 @@ export class AIAgentsSDK {
 
     // Create a topic if it doesn't exist
     const topic = this.pubsub.topic(AIAgentsSDK.topicName);
-    // Create a subscription to the topic
-    const [subscription] = await topic.createSubscription(subscriptionNameOrId);
-    console.log(`Subscription ${subscription.name} created.`);
+    
+    // Check if the subscription already exists
+    const [subscriptions] = await topic.getSubscriptions();
+    this.subscription = subscriptions.find(sub => sub.name.endsWith(subscriptionNameOrId));
+    
+    if (!this.subscription) {
+      // Create a subscription to the topic if it doesn't exist
+      [this.subscription] = await topic.createSubscription(subscriptionNameOrId);
+      console.log(`Subscription ${this.subscription.name} created.`);
+    } else {
+      console.log(`Subscription ${this.subscription.name} already exists.`);
+    }
 
     // Create an event handler to handle messages
     let messageCount = 0;
     const messageHandler = (message: any) => {
       console.log(`Received message ${message.id}:`);
-      console.log(`\tData: ${message.data}`);
+      const proposal = JSON.parse(message.data);
+      console.log(`\Proposal: ${proposal}`);
       console.log(`\tAttributes: ${message.attributes}`);
       messageCount += 1;
-
+      this.onNewProposal(proposal);
       // "Ack" (acknowledge receipt of) the message
       message.ack();
     };
     // Listen for new messages until timeout is hit
-    subscription.on('message', messageHandler);
+    this.subscription.on('message', messageHandler);
   }
 
   /**
