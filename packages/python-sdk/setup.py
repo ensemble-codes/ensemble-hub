@@ -10,5 +10,9 @@ setup(
         "eth-typing>=3.0.0",
         "python-dotenv>=1.0.0",
     ],
+    tests_require=[
+        "pytest>=7.0.0",
+        "pytest-asyncio>=0.21.0",
+    ],
     python_requires=">=3.8",
 )
