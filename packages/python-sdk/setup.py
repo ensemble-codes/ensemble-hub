@@ -9,6 +9,7 @@ setup(
         "web3>=6.0.0",
         "eth-typing>=3.0.0",
         "python-dotenv>=1.0.0",
+        "google-cloud-pubsub>=4.9.0",
     ],
     tests_require=[
         "pytest>=7.0.0",
