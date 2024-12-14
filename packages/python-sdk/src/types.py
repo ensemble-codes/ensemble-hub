@@ -4,6 +4,22 @@ from enum import Enum
 from typing import List, Optional
 from decimal import Decimal
 
+@dataclass
+class Proposal:
+    id: int
+    price: int
+    task_id: int
+    agent: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'Proposal':
+        return cls(
+            id=int(data['id']),
+            price=int(data['price']),
+            task_id=int(data['taskId']),
+            agent=data['agent']
+        )
+
 class TaskType(Enum):
     SIMPLE = 0
     COMPLEX = 1
