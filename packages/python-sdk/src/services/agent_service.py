@@ -1,6 +1,6 @@
 
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 from web3 import Web3
 from web3.contract import Contract
 from eth_typing import Address
