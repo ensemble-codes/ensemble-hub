@@ -1,7 +1,7 @@
 
 from google.cloud import pubsub_v1
 from typing import Any, Callable, Optional
-from web3 import Contract
+from web3.contract import Contract
 from eth_typing import Address
 from ..types import Proposal
 
