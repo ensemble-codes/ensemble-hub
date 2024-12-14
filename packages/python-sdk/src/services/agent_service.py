@@ -1,7 +1,8 @@
 
 from decimal import Decimal
 from typing import List
-from web3 import Web3, Contract
+from web3 import Web3
+from web3.contract import Contract
 from eth_typing import Address
 from ..types import AgentData
 
