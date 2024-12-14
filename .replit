@@ -1,4 +1,3 @@
-
 run = "cd packages/python-sdk && python -m pytest tests/"
 modules = ["python-3.11:v18-20230807-322e88b"]
 
@@ -9,8 +8,12 @@ channel = "stable-24_05"
 [languages.python]
 pattern = "**/*.py"
 syntax = "python"
-languageServer = "python"
+# languageServer = "python"
 
 [deployment]
 run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8545
+externalPort = 80
