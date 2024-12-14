@@ -1,74 +1,13 @@
-modules = ["nodejs-20"]
+
+run = "cd packages/python-sdk && python -m pytest tests/"
+modules = ["python-3.11:v18-20230807-322e88b"]
 
 [nix]
 channel = "stable-24_05"
 
-[workflows]
-runButton = "Project"
-
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Hardhat Tests"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "SDK Build"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Hardhat Node"
-
-[[workflows.workflow]]
-name = "Hardhat Tests"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd packages/contracts && npx hardhat test"
-
-[[workflows.workflow]]
-name = "SDK Build"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd packages/sdk && npm run build"
-
-[[workflows.workflow]]
-name = "Hardhat Node"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd packages/contracts && npx hardhat node"
-waitForPort = 8545
+[languages]
+python = "3.11"
 
 [deployment]
-run = ["sh", "-c", "cd packages/contracts && npx hardhat test"]
-
-[[ports]]
-localPort = 8545
-externalPort = 80
+run = ["python3", "main.py"]
+deploymentTarget = "cloudrun"
