@@ -29,6 +29,7 @@ def setup_sdk(user_type='user'):
 
 class TestEnsembleSDK:
     @pytest.fixture(autouse=True)
+    @pytest.mark.asyncio
     async def setup(self):
         self.sdk, self.private_key = setup_sdk()
         await self.sdk.connect(self.private_key)
