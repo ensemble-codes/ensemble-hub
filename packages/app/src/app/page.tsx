@@ -1,15 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import TaskList from './components/TaskList'
-import ActivityLog from './components/ActivityLog'
-import PromptInterface from './components/PromptInterface'
-import TaskProposalDialog from './components/TaskProposalDialog'
-import TaskStatusWidget from './components/TaskStatusWidget'
-import { TaskProposal, Agent, Task } from './types'
+import { TaskProposal, Agent, Task, Tab } from './types'
 import { usePersistentTasks } from './hooks/usePersistentTasks'
-import { Switch } from "@/components/ui/switch"
-import AgentPoolWidget from './components/AgentPoolWidget'
+import Sidebar from './components/Sidebar'
+import Chat from './components/Chat'
 
 interface ActivityLogEntry {
   id: number
@@ -26,6 +21,7 @@ export default function Home() {
   const [isAgentPoolActive, setIsAgentPoolActive] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isTaskStatusOpen, setIsTaskStatusOpen] = useState(false)
+  const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Chat)
 
   useEffect(() => {
     const storedLog = localStorage.getItem('ensemble-activity-log')
@@ -115,49 +111,9 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-full">
-      <div className="flex-grow overflow-hidden">
-        <div className="flex flex-col h-full">
-          <div className="flex-grow overflow-hidden">
-            <TaskList tasks={tasks} onTaskClick={handleTaskClick} />
-          </div>
-          <div className="flex-shrink-0">
-            <PromptInterface onSubmit={handleAddTask} />
-          </div>
-        </div>
-      </div>
-      <div className="w-1/3 ml-4 overflow-hidden flex flex-col">
-        <div className="flex-grow overflow-hidden mb-4">
-          <ActivityLog entries={activityLog} />
-        </div>
-        <div className="h-2/5">
-          <div className="flex items-center justify-between mb-2">
-            <span>Agents Pool</span>
-            <Switch
-              checked={isAgentPoolActive}
-              onCheckedChange={setIsAgentPoolActive}
-            />
-          </div>
-          <AgentPoolWidget selectedAgents={selectedAgents} isActive={isAgentPoolActive} />
-        </div>
-      </div>
-      {currentProposal && (
-        <TaskProposalDialog
-          isOpen={isProposalOpen}
-          onClose={() => {
-            setIsProposalOpen(false)
-            setCurrentProposal(null)
-          }}
-          proposal={currentProposal}
-          onAccept={handleAcceptProposal}
-          onReject={handleRejectProposal}
-        />
-      )}
-      <TaskStatusWidget
-        task={selectedTask}
-        isOpen={isTaskStatusOpen}
-        onClose={() => setIsTaskStatusOpen(false)}
-      />
+    <div className='flex'>
+      <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      {selectedTab === Tab.Chat && <Chat />}
     </div>
   )
 }

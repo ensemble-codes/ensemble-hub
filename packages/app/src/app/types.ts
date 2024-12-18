@@ -42,3 +42,9 @@ export interface Workflow {
   steps: WorkflowStep[]
 }
 
+export enum Tab {
+  Chat = 'chat',
+  Defi1 = 'defi-1',
+  Defi2 = 'defi-2',
+  Defi3 = 'defi-3',
+}
