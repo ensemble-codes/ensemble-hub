@@ -48,48 +48,112 @@ export class Ensemble {
     
   }
 
-  // Public API methods that delegate to appropriate services
+  /**
+   * Creates a new task.
+   * @param {TaskCreationParams} params - The parameters for task creation.
+   * @returns {Promise<bigint>} A promise that resolves to the task ID.
+   */
   async createTask(params: TaskCreationParams): Promise<bigint> {
     return this.taskService.createTask(params);
   }
 
-  async registerAgent(model: string, prompt: string, skills: string[]): Promise<string> {
-    return this.agentService.registerAgent(model, prompt, skills);
-  }
-
-  async getWalletAddress(): Promise<string> {
-    return this.agentService.getAddress();
-  }
-
-  async sendProposal(taskId: string, price: BigNumberish): Promise<void> {
-    return this.proposalService.sendProposal(taskId, await this.agentService.getAddress(), price);
-  }
-
-  async getProposals(taskId: string): Promise<string[]> {
-    return this.proposalService.getProposals(taskId);
-  }
-
-  async getTasksByOwner(owner: string): Promise<string[]> {
-    return this.taskService.getTasksByOwner(owner);
-  }
-
-  async getAgentData(agentId: string): Promise<AgentData> {
-    return this.agentService.getAgentData(agentId);
-  }
-  async isAgentRegistered(agentId: string): Promise<boolean> {
-    return this.agentService.isAgentRegistered(agentId);
-  }
-
+  /**
+   * Gets data for a specific task.
+   * @param {string} taskId - The ID of the task.
+   * @returns {Promise<TaskData>} A promise that resolves to the task data.
+   */
   async getTaskData(taskId: string): Promise<TaskData> {
     return this.taskService.getTaskData(taskId);
   }
 
-  async approveProposal(taskId: BigNumberish, proposal: Proposal): Promise<void> {
-    return this.proposalService.approveProposal(taskId, proposal);
+  /**
+   * Gets tasks by owner.
+   * @param {string} owner - The owner of the tasks.
+   * @returns {Promise<string[]>} A promise that resolves to the task IDs.
+   */
+  async getTasksByOwner(owner: string): Promise<TaskData[]> {
+    return this.taskService.getTasksByOwner(owner);
   }
 
+  /**
+   * Completes a task.
+   * @param {BigNumberish} taskId - The ID of the task.
+   * @param {string} result - The result of the task.
+   * @returns {Promise<void>} A promise that resolves when the task is completed.
+   */
   async completeTask(taskId: BigNumberish, result: string): Promise<void> {
     return this.taskService.completeTask(taskId, result);
+  }
+  
+  /**
+   * Registers a new agent.
+   * @param {string} model - The model of the agent.
+   * @param {string} prompt - The prompt for the agent.
+   * @param {string[]} skills - The skills of the agent.
+   * @returns {Promise<string>} A promise that resolves to the agent address.
+   */
+  async registerAgent(model: string, prompt: string, skills: string[]): Promise<string> {
+    return this.agentService.registerAgent(model, prompt, skills);
+  }
+
+  /**
+   * Gets the address of the agent.
+   * @returns {Promise<string>} A promise that resolves to the agent address.
+   */
+  async getWalletAddress(): Promise<string> {
+    return this.agentService.getAddress();
+  }
+
+  /**
+   * Gets data for a specific agent.
+   * @param {string} agentAddress - The address of the agent.
+   * @returns {Promise<AgentData>} A promise that resolves to the agent data.
+   */
+  async getAgentData(agentId: string): Promise<AgentData> {
+    return this.agentService.getAgentData(agentId);
+  }
+
+  /**
+   * Checks if an agent is registered.
+   * @param {string} agentAddress - The address of the agent.
+   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the agent is registered.
+   */
+  async isAgentRegistered(agentId: string): Promise<boolean> {
+    return this.agentService.isAgentRegistered(agentId);
+  }
+
+
+  /**
+   * Sends a proposal for a task.
+   * @param {string} taskId - The ID of the task.
+   * @param {BigNumberish} price - The price of the proposal.
+   * @returns {Promise<void>} A promise that resolves when the proposal is sent.
+   */
+  async sendProposal(taskId: string, price: BigNumberish): Promise<void> {
+    return this.proposalService.sendProposal(taskId, await this.agentService.getAddress(), price);
+  }
+
+  /**
+   * Gets proposals for a task.
+   * @param {string} taskId - The ID of the task.
+   * @returns {Promise<string[]>} A promise that resolves to an array of proposal IDs.
+   */
+  async getProposals(taskId: string): Promise<string[]> {
+    return this.proposalService.getProposals(taskId);
+  }
+
+  /**
+   * Approves a proposal for a task.
+   * @param {BigNumberish} taskId - The ID of the task.
+   * @param {Object} proposal - The proposal object.
+   * @param {BigNumberish} proposal.id - The ID of the proposal.
+   * @param {BigNumberish} proposal.price - The price of the proposal.
+   * @param {BigNumberish} proposal.taskId - The ID of the task.
+   * @param {string} proposal.agent - The agent address.
+   * @returns {Promise<void>} A promise that resolves when the proposal is approved.
+   */
+  async approveProposal(taskId: BigNumberish, proposal: Proposal): Promise<void> {
+    return this.proposalService.approveProposal(taskId, proposal);
   }
 
   async setOnNewTaskListener(listener: (taskId: string) => void) {

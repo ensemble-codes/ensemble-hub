@@ -1,9 +1,15 @@
-export * from './src';
-export * from './src/types';
+import { Ensemble } from "./src/ensemble";
+import { TaskService } from "./src/services/TaskService";
+import { AgentService } from "./src/services/AgentService";
+import { ProposalService } from "./src/services/ProposalService";
+import { ContractService } from "./src/services/ContractService";
 
+export { Ensemble, TaskService, AgentService, ProposalService, ContractService };
+export default Ensemble;
 // Re-export commonly used enums and types for convenience
-export { TaskType, TaskStatus } from './src/types';
 export type { 
+  TaskType,
+  TaskStatus,
   TaskData,
   AgentData,
   Skill,
@@ -12,5 +18,3 @@ export type {
   NetworkConfig
 } from './src/types';
 
-// Export the main SDK class
-export { AIAgentsSDK } from './src';

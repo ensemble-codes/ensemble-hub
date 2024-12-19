@@ -17,6 +17,7 @@ export class AgentService {
   async getAddress(): Promise<string> {
     return this.signer.getAddress();
   }
+
   /**
    * Registers a new agent.
    * @param {string} model - The model of the agent.
@@ -50,7 +51,7 @@ export class AgentService {
     return event;
   }
 
-    /**
+  /**
    * Gets data for a specific agent.
    * @param {string} agentAddress - The address of the agent.
    * @returns {Promise<AgentData>} A promise that resolves to the agent data.
@@ -69,7 +70,7 @@ export class AgentService {
     };
   }
 
-    /**
+  /**
    * Checks if an agent is registered.
    * @param {string} agentAddress - The address of the agent.
    * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the agent is registered.
