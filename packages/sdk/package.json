@@ -1,5 +1,5 @@
 {
-  "name": "@ai-agents/sdk",
+  "name": "@ensemble-ai/sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for AI Agents Smart Contract System",
   "main": "dist/index.js",
