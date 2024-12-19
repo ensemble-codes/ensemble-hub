@@ -109,7 +109,6 @@ html, body, #__next {
 /* Border utilities */
 .rounded { border-radius: 0.25rem; }
 .rounded-lg { border-radius: 0.5rem; }
-.border { border: 1px solid #e5e7eb; }
 .border-gray-200 { border-color: #e5e7eb; }
 
 /* Width/Height utilities */
@@ -161,6 +160,7 @@ html, body, #__next {
     --destructive-foreground: 0 0% 98%;
     /* #00D64F */
     --malachite: 142.18 100% 41.96%;
+    --electric-purple: 277 100% 56%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;

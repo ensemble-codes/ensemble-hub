@@ -113,7 +113,7 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
             {pendingTasks.map((task) => (
               <button
                 key={task.id}
-                className='flex justify-between items-center gap-2 bg-white border border-primary-foreground p-1 max-w-48 rounded-full transition-all ease-in-out duration-300 hover:opacity-70'
+                className='flex justify-between items-center gap-2 bg-background border border-primary-foreground p-1 max-w-48 rounded-full transition-all ease-in-out duration-300 hover:opacity-70'
                 style={{
                   boxShadow: selectedTab === task.id ? selected.pending.boxShadow : 'none'
                 }}
@@ -153,7 +153,7 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
             {activeTasks.map((task) => (
               <button
                 key={task.id}
-                className='flex justify-between items-center gap-2 bg-white border border-primary-foreground p-1 max-w-48 rounded-full transition-all ease-in-out duration-300 hover:opacity-70'
+                className='flex justify-between items-center gap-2 bg-background border border-primary-foreground p-1 max-w-48 rounded-full transition-all ease-in-out duration-300 hover:opacity-70'
                 style={{
                   boxShadow: selectedTab === task.id ? selected.active.boxShadow : 'none'
                 }}
@@ -183,7 +183,7 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
             {completedTasks.map((task) => (
               <div
                 key={task.id}
-                className='flex justify-between items-center gap-2 bg-white border border-primary-foreground p-1 max-w-48 rounded-full opacity-40'
+                className='flex justify-between items-center gap-2 bg-background border border-primary-foreground p-1 max-w-48 rounded-full opacity-40'
               >
                 <div className='flex items-center gap-2'>
                   <Image

@@ -55,7 +55,8 @@ module.exports = {
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
 				},
-				malachite: 'hsl(var(--malachite))'
+				malachite: 'hsl(var(--malachite))',
+				'electric-purple': 'hsl(var(--electric-purple))'
 			},
 			fontFamily: {
 				satoshi: ["var(--font-satoshi)"],
