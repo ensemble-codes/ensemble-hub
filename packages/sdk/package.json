@@ -1,7 +1,7 @@
 {
   "name": "@ensemble-ai/sdk",
-  "version": "0.1.0",
-  "description": "TypeScript SDK for AI Agents Smart Contract System",
+  "version": "0.1.1",
+  "description": "TypeScript SDK for the Agentic Hub",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
