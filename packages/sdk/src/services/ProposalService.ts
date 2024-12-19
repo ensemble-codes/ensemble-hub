@@ -59,7 +59,7 @@ export class ProposalService {
     this.subscription.on('message', messageHandler);
   }
 
-    /**
+  /**
    * Sends a proposal for a task.
    * @param {string} taskId - The ID of the task.
    * @param {BigNumberish} price - The price of the proposal.

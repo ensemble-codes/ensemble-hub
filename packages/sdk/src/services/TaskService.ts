@@ -44,7 +44,12 @@ export class TaskService {
     };
   }
 
-  async getTasksByOwner(owner: string): Promise<string[]> {
+  /**
+   * Gets tasks by owner.
+   * @param {string} owner - The owner of the tasks.
+   * @returns {Promise<string[]>} A promise that resolves to the task IDs.
+   */
+  async getTasksByOwner(owner: string): Promise<TaskData[]> {
     return this.taskRegistry.getTasksByOwner(owner);
   }
 
