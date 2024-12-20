@@ -1,23 +1,22 @@
 import { useState } from 'react'
 import Image from 'next/image'
-
-import { Tab } from '../types'
-import { Online, ProgressCircle } from './Icons'
 import { Menu, X } from 'lucide-react'
 
-import agent from '@/assets/agent.png'
-import pendingAgent from '@/assets/pending-agent.svg'
+import { Online, ProgressCircle } from './Icons'
+import { cn } from '@/lib/utils'
+import { usePersistentTasks } from '../hooks/usePersistentTasks'
+
+import pendingAvatar from '@/assets/pending-avatar.svg'
 import clock from '@/assets/clock.svg'
 import check from '@/assets/check.svg'
-import { cn } from '@/lib/utils'
 
 type SidebarProps = {
-  selectedTab: Tab
-  setSelectedTab: (tab: Tab) => void
+  selectedTab: number
+  setSelectedTab: (tab: number) => void
 }
 
 type TabItem = {
-  id: Tab
+  id: number
   name: string
   icon: (color: string) => JSX.Element
 }
@@ -48,39 +47,15 @@ const unselected = {
 
 const tabs: TabItem[] = [
   {
-    id: Tab.Chat,
+    id: -1,
     name: 'Chat',
     icon: (color: string) => <Online color={color} />,
   },
 ]
 
-const activeTasks = [
-  {
-    id: Tab.Defi1,
-    name: 'DeFi',
-    progress: 25,
-    image: agent,
-  }
-]
-
-const pendingTasks = [
-  {
-    id: Tab.Defi2,
-    name: 'DeFi',
-    image: pendingAgent,
-  }
-]
-
-const completedTasks = [
-  {
-    id: Tab.Defi3,
-    name: 'DeFi',
-    image: agent,
-  }
-]
-
 export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const { tasks, proposals } = usePersistentTasks()
 
   return (
     <aside className='relative flex'>
@@ -110,7 +85,7 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
             PENDING TASKS
           </p>
           <div className='flex flex-col gap-3 max-h-28 overflow-y-auto'>
-            {pendingTasks.map((task) => (
+            {tasks.map((task) => (
               <button
                 key={task.id}
                 className='flex justify-between items-center gap-2 bg-background border border-primary-foreground p-1 max-w-48 rounded-full transition-all ease-in-out duration-300 hover:opacity-70'
@@ -121,14 +96,14 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
               >
                 <div className='flex items-center gap-2'>
                   <Image
-                    src={task.image}
+                    src={pendingAvatar}
                     alt=""
                     width={40}
                     height={40}
                   />
                   <div className='flex flex-col items-start gap-0.5'>
                     <p className='text-primary-foreground font-medium'>
-                      {task.name}
+                      {task.taskType}
                     </p>
                     <p className='text-xs text-primary'>
                       assign agent
@@ -150,27 +125,27 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
             ACTIVE TASKS
           </p>
           <div className='flex flex-col gap-3 max-h-28 overflow-y-auto'>
-            {activeTasks.map((task) => (
+            {proposals.filter((proposal) => proposal.task.status === 'assigned').map((proposal) => (
               <button
-                key={task.id}
+                key={proposal.id}
                 className='flex justify-between items-center gap-2 bg-background border border-primary-foreground p-1 max-w-48 rounded-full transition-all ease-in-out duration-300 hover:opacity-70'
                 style={{
-                  boxShadow: selectedTab === task.id ? selected.active.boxShadow : 'none'
+                  boxShadow: selectedTab === proposal.id ? selected.active.boxShadow : 'none'
                 }}
-                onClick={() => setSelectedTab(task.id)}
+                onClick={() => setSelectedTab(proposal.id)}
               >
                 <div className='flex items-center gap-2'>
                   <Image
-                    src={task.image}
+                    src={proposal.agent.avatar}
                     alt=""
                     width={40}
                     height={40}
                   />
                   <p className='text-primary-foreground font-medium'>
-                    {task.name}
+                    {proposal.agent.name}
                   </p>
                 </div>
-                <ProgressCircle progress={task.progress} />
+                <ProgressCircle progress={proposal.task.progress} />
               </button>
             ))}
           </div>
@@ -180,20 +155,20 @@ export default function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
             COMPLETED
           </p>
           <div className='flex flex-col gap-3 max-h-28 overflow-y-auto'>
-            {completedTasks.map((task) => (
+            {proposals.filter((proposal) => proposal.task.status === 'completed').map((proposal) => (
               <div
-                key={task.id}
+                key={proposal.id}
                 className='flex justify-between items-center gap-2 bg-background border border-primary-foreground p-1 max-w-48 rounded-full opacity-40'
               >
                 <div className='flex items-center gap-2'>
                   <Image
-                    src={task.image}
+                    src={proposal.agent.avatar}
                     alt=""
                     width={40}
                     height={40}
                   />
                   <p className='text-primary-foreground font-medium'>
-                    {task.name}
+                    {proposal.agent.name}
                   </p>
                 </div>
                 <Image

@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { TaskProposal, Agent, Task, Tab } from './types'
+import { TaskProposal, Agent, Task } from './types'
 import { usePersistentTasks } from './hooks/usePersistentTasks'
 import Sidebar from './components/Sidebar'
+import Window from './components/Window'
 import Chat from './components/Chat'
+import ChooseAgent from './components/ChooseAgent'
 
 interface ActivityLogEntry {
   id: number
@@ -21,7 +23,7 @@ export default function Home() {
   const [isAgentPoolActive, setIsAgentPoolActive] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isTaskStatusOpen, setIsTaskStatusOpen] = useState(false)
-  const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Chat)
+  const [selectedTab, setSelectedTab] = useState(-1)
 
   useEffect(() => {
     const storedLog = localStorage.getItem('ensemble-activity-log')
@@ -57,28 +59,10 @@ export default function Home() {
   const handleAddTask = (prompt: string, taskType: string) => {
     const newTask = addTask(prompt, taskType)
     addActivityLogEntry(`New task created: ${prompt}`)
-
-    // Show proposal dialog after 2 seconds
-    setTimeout(() => {
-      const proposal: TaskProposal = {
-        taskId: newTask.id,
-        agent: {
-          id: 1,
-          name: "AI Analysis Agent",
-          status: "active",
-          expertise: ["Data Analysis", "Machine Learning", "NLP"]
-        },
-        price: 0.02,
-        task: newTask
-      }
-      setCurrentProposal(proposal)
-      setIsProposalOpen(true)
-      addActivityLogEntry(`Proposal received for task: ${prompt}`)
-    }, 5000)
   }
 
   const handleAcceptProposal = async (proposal: TaskProposal) => {
-    updateTaskStatus(proposal.taskId, 'assigned')
+    updateTaskStatus(proposal.task.id, 'assigned')
     addActivityLogEntry(`Proposal accepted for task: ${proposal.task.prompt}`)
     setIsProposalOpen(false)
     setCurrentProposal(null)
@@ -93,8 +77,8 @@ export default function Home() {
   4. Recommendations provided based on the analysis results.
   
   For more detailed information, please refer to the full report attached to this response.`
-      updateTaskResponse(proposal.taskId, mockResponse)
-      updateTaskStatus(proposal.taskId, 'completed')
+      updateTaskResponse(proposal.task.id, mockResponse)
+      updateTaskStatus(proposal.task.id, 'completed')
       addActivityLogEntry(`Task completed: ${proposal.task.prompt}`)
     }, delay)
   }
@@ -113,7 +97,12 @@ export default function Home() {
   return (
     <div className='flex'>
       <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      {selectedTab === Tab.Chat && <Chat />}
+      <Window>
+        {selectedTab === -1 && <Chat setSelectedTab={setSelectedTab} />}
+        {tasks.map((task) => (
+          selectedTab === task.id && <ChooseAgent key={task.id} task={task} />
+        ))}
+      </Window>
     </div>
   )
 }
