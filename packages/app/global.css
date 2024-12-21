@@ -109,7 +109,6 @@ html, body, #__next {
 /* Border utilities */
 .rounded { border-radius: 0.25rem; }
 .rounded-lg { border-radius: 0.5rem; }
-.border { border: 1px solid #e5e7eb; }
 .border-gray-200 { border-color: #e5e7eb; }
 
 /* Width/Height utilities */
@@ -140,21 +139,28 @@ html, body, #__next {
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    /* #3D3D3D */
+    --foreground: 0 0% 23.92%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    /* #FE4600 */
+    --primary: 16.54 100% 49.8%;
+    /* #8F95B2 */
+    --primary-foreground: 229.71 18.52% 62.94%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
+    /* #1DFF5D */
+    --accent: 136.99 100% 55.69%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    /* #00D64F */
+    --malachite: 142.18 100% 41.96%;
+    --electric-purple: 277 100% 56%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;

@@ -1,8 +1,14 @@
 import '../../global.css'
-import { Inter } from 'next/font/google'
-import Navigation from './components/Navigation'
+import localFont from 'next/font/local'
+import Image from 'next/image'
 
-const inter = Inter({ subsets: ['latin'] })
+import ensemble from '@/assets/ensemble.svg'
+
+const satoshi = localFont({
+  src: './Satoshi-Variable.woff2',
+  display: 'swap',
+  variable: '--font-satoshi',
+})
 
 export const metadata = {
   title: 'Ensemble - Agentic Framework',
@@ -16,14 +22,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} flex flex-col h-full`}>
-        <header className="bg-gray-800 text-white">
-          <div className="container mx-auto px-4 py-2 flex flex-col items-center">
-            <h1 className="text-2xl font-bold mb-2">Ensemble</h1>
-            <Navigation />
-          </div>
+      <body className={`${satoshi.className} flex flex-col gap-6 h-full max-w-screen-xl mx-auto px-4 py-8 bg-[url('/background.svg')] bg-center bg-no-repeat`}>
+        <header>
+          <Image
+            src={ensemble}
+            alt="Ensemble Logo"
+            width={56}
+            height={56}
+          />
         </header>
-        <main className="flex-grow bg-gray-100 overflow-hidden">
+        <main className="flex-grow overflow-hidden">
           {children}
         </main>
       </body>

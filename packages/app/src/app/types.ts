@@ -1,9 +1,12 @@
+import { StaticImageData } from "next/image"
+
 export interface Task {
   id: number
   prompt: string
   taskType: string
   status: 'pending' | 'executing' | 'done' | 'error' | 'assigned' | 'completed'
-  createdAt: Date
+  progress: number
+  createdAt: number
   response?: string
 }
 
@@ -13,20 +16,29 @@ export interface Tool {
   description: string
 }
 
+export interface Link {
+  name: string
+  url: string
+  icon: string
+}
+
 export interface Agent {
   id: number
   name: string
   status: 'active' | 'idle'
-  avatar?: string
+  avatar: string | StaticImageData
   expertise?: string[]
   category: 'DeFi' | 'Social' | 'Analysis' | 'Audit'
   reputation: number // 0-5 star rating
+  links: Link[]
 }
 
 export interface TaskProposal {
-  taskId: number
+  id: number
   agent: Agent
   price: number
+  time: number
+  isBestValue: boolean
   task: Task
 }
 
@@ -41,4 +53,3 @@ export interface Workflow {
   description: string
   steps: WorkflowStep[]
 }
-

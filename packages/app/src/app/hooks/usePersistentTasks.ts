@@ -1,22 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Task } from '../types'
+import { Task, TaskProposal } from '../types'
 
 export function usePersistentTasks() {
   const [tasks, setTasks] = useState<Task[]>([])
+  const [proposals, setProposals] = useState<TaskProposal[]>([])
 
   // Load tasks from localStorage on initial mount
   useEffect(() => {
     const storedTasks = localStorage.getItem('ensemble-tasks')
+    const storedProposals = localStorage.getItem('ensemble-proposals')
     if (storedTasks) {
       const parsedTasks = JSON.parse(storedTasks)
-      // Convert stored date strings back to Date objects
-      const tasksWithDates = parsedTasks.map((task: any) => ({
-        ...task,
-        createdAt: new Date(task.createdAt)
-      }))
-      setTasks(tasksWithDates)
+      setTasks(parsedTasks)
+    }
+    if (storedProposals) {
+      const parsedProposals = JSON.parse(storedProposals)
+      setProposals(parsedProposals)
     }
   }, [])
 
@@ -26,16 +27,27 @@ export function usePersistentTasks() {
     localStorage.setItem('ensemble-tasks', JSON.stringify(newTasks))
   }
 
+  const updateProposals = (newProposals: TaskProposal[]) => {
+    setProposals(newProposals)
+    localStorage.setItem('ensemble-proposals', JSON.stringify(newProposals))
+  }
+
   const addTask = (prompt: string, taskType: string) => {
     const newTask: Task = {
       id: Date.now(),
       prompt,
       taskType,
       status: 'pending',
-      createdAt: new Date(),
+      progress: 0,
+      createdAt: Date.now(),
     }
     updateTasks([...tasks, newTask])
     return newTask
+  }
+
+  const addProposal = (proposal: TaskProposal) => {
+    updateProposals([...proposals, proposal])
+    return proposal
   }
 
   const updateTaskStatus = (taskId: number, status: Task['status']) => {
@@ -54,9 +66,11 @@ export function usePersistentTasks() {
 
   return {
     tasks,
+    proposals,
     addTask,
     updateTaskStatus,
-    updateTaskResponse
+    updateTaskResponse,
+    addProposal
   }
 }
 
