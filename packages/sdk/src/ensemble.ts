@@ -14,6 +14,15 @@ export class Ensemble {
   private proposalService: ProposalService;
 
   constructor(config: ContractConfig, signer: ethers.Wallet) {
+    console.log('Config Params:', {
+      network: {
+        rpcUrl: config.network.rpcUrl,
+        chainId: config.network.chainId,
+        name: config.network.name
+      },
+      taskRegistryAddress: config.taskRegistryAddress,
+      agentRegistryAddress: config.agentRegistryAddress
+    });
     this.contractService = new ContractService(
       new ethers.JsonRpcProvider(config.network.rpcUrl),
       signer
@@ -30,7 +39,7 @@ export class Ensemble {
       AgentRegistryABI
     );
 
-    this.taskService = new TaskService(taskRegistry);
+    this.taskService = new TaskService(taskRegistry, signer);
     this.agentService = new AgentService(agentRegistry, signer);
     this.proposalService = new ProposalService({
       projectId: 'ensemble-ai-443111',
@@ -53,7 +62,7 @@ export class Ensemble {
    * @param {TaskCreationParams} params - The parameters for task creation.
    * @returns {Promise<bigint>} A promise that resolves to the task ID.
    */
-  async createTask(params: TaskCreationParams): Promise<bigint> {
+  async createTask(params: TaskCreationParams): Promise<TaskData> {
     return this.taskService.createTask(params);
   }
 
@@ -156,8 +165,8 @@ export class Ensemble {
     return this.proposalService.approveProposal(taskId, proposal);
   }
 
-  async setOnNewTaskListener(listener: (taskId: string) => void) {
-    return this.taskService
+  async setOnNewTaskListener(listener: (task: TaskData) => void) {
+    return this.taskService.setOnNewTaskListener(listener);
   }
 
   async setOnNewProposalListener(listener: (proposal: Proposal) => void) {

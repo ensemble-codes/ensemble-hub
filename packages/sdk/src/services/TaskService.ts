@@ -1,12 +1,14 @@
 import { BigNumberish, ethers } from "ethers";
-import { TaskCreationParams, TaskData } from "../types";
+import { TaskCreationParams, TaskData, TaskStatus } from "../types";
 
 export class TaskService {
   private taskRegistry: ethers.Contract;
-  protected onNewTask: (taskId: string) => void = () => {};
+  protected onNewTask: (task: TaskData) => void = () => {};
+  private signer: ethers.Wallet;
 
-  constructor(taskRegistry: ethers.Contract) {
+  constructor(taskRegistry: ethers.Contract, signer: ethers.Wallet) {
     this.taskRegistry = taskRegistry;
+    this.signer = signer;
   }
 
   /**
@@ -14,16 +16,27 @@ export class TaskService {
    * @param {TaskCreationParams} params - The parameters for task creation.
    * @returns {Promise<bigint>} A promise that resolves to the task ID.
    */
-  async createTask(params: TaskCreationParams): Promise<bigint> {
+  async createTask(params: TaskCreationParams): Promise<TaskData> {
     const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
+    console.log("sending txhash:", tx.hash);
     const receipt = await tx.wait();
     
     const event = this.findEventInReceipt(receipt, "TaskCreated");
-    if (!event?.args?.[1]) {
-      throw new Error("Task creation failed: No task address in event");
-    }
+    // if (!event?.args?.[1]) {
+    //   throw new Error("Task creation failed: No task address in event");
+    // }
+    // const taskId = event.args[1];
+    const owner = event.args[0];
     const taskId = event.args[1];
-    return taskId;
+    const prompt = event.args[2];
+    const taskType = event.args[3];
+    return {
+      id: taskId,
+      prompt,
+      taskType,
+      status: TaskStatus.CREATED,
+      owner
+    };
   }
 
   /**
@@ -73,18 +86,35 @@ export class TaskService {
    * Subscribes to new task creation events.
    */
   public async subscribe() {
+    console.log("taskRegistry.filters:", this.taskRegistry.filters);
     const filter = this.taskRegistry.filters.TaskCreated();
-
+    console.log("filter:", filter);
+    // console.log("filter:", filter);
+    console.log("taskRegistry.target:", this.taskRegistry.target);
     this.taskRegistry.on(filter, ({ args: [ owner, taskId, prompt, taskType ] }) => {
       console.log(`Owner: ${owner}
         Task ID: ${taskId}
         Prompt: ${prompt}
         Task Type: ${taskType}`);
-      this.onNewTask(taskId.toString());
+      this.onNewTask({ owner, id: taskId, prompt, taskType, status: TaskStatus.CREATED });
     });
+
+    // let startBlock = await this.signer.provider?.getBlockNumber();
+    // console.log("currentBlock:", startBlock);
+    // setInterval(async () => {
+    //   const currentBlock = await this.signer.provider?.getBlockNumber();
+    //   console.log("startBlock", startBlock);
+    //   console.log("currentBlock", currentBlock);
+    //   const events = await this.taskRegistry.queryFilter('TaskCreated', startBlock);
+    //   console.log("events:", events);
+    //   // startBlock = currentBlock;
+
+    // }, 3000); // 10 seconds timeout
+
+
   }
 
-  setOnNewTaskListener(listener: (taskId: string) => void) {
+  setOnNewTaskListener(listener: (task: TaskData) => void) {
     this.onNewTask = listener;
   } 
 
