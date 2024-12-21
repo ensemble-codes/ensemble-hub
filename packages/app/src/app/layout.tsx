@@ -3,6 +3,9 @@ import localFont from 'next/font/local'
 import Image from 'next/image'
 
 import ensemble from '@/assets/ensemble.svg'
+import SolanaProvider from './components/SolanaProvider'
+import WalletButton from './components/WalletButton'
+
 
 const satoshi = localFont({
   src: './Satoshi-Variable.woff2',
@@ -23,17 +26,20 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${satoshi.className} flex flex-col gap-6 h-full max-w-screen-xl mx-auto px-4 py-8 bg-[url('/background.svg')] bg-center bg-no-repeat`}>
-        <header>
-          <Image
-            src={ensemble}
-            alt="Ensemble Logo"
-            width={56}
-            height={56}
-          />
-        </header>
-        <main className="flex-grow overflow-hidden">
-          {children}
-        </main>
+        <SolanaProvider>
+          <header>
+            <Image
+              src={ensemble}
+              alt="Ensemble Logo"
+              width={56}
+              height={56}
+            />
+            <WalletButton />
+          </header>
+          <main className="flex-grow overflow-hidden">
+            {children}
+          </main>
+        </SolanaProvider>
       </body>
     </html>
   )
