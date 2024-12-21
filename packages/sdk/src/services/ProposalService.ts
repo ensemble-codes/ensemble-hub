@@ -68,9 +68,11 @@ export class ProposalService {
   async sendProposal(taskId: string, agentId: string, price: BigNumberish): Promise<void> {
     const pubsub = new PubSub();
     const topicName = this.topicName;
-
+    console.log(`Task ID: ${taskId} (type: ${typeof taskId})`);
+    console.log(`Agent ID: ${agentId} (type: ${typeof agentId})`);
+    console.log(`Price: ${price} (type: ${typeof price})`);
     const data = JSON.stringify({
-      taskId,
+      taskId: taskId.toString(),
       price: price.toString(),
       agent: agentId
     });
