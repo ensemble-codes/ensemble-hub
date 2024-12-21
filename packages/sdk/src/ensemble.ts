@@ -60,7 +60,7 @@ export class Ensemble {
   /**
    * Creates a new task.
    * @param {TaskCreationParams} params - The parameters for task creation.
-   * @returns {Promise<bigint>} A promise that resolves to the task ID.
+   * @returns {Promise<TaskData>} A promise that resolves to the task ID.
    */
   async createTask(params: TaskCreationParams): Promise<TaskData> {
     return this.taskService.createTask(params);

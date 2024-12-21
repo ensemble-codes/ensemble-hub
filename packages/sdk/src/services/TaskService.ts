@@ -14,7 +14,7 @@ export class TaskService {
   /**
    * Creates a new task.
    * @param {TaskCreationParams} params - The parameters for task creation.
-   * @returns {Promise<bigint>} A promise that resolves to the task ID.
+   * @returns {Promise<TaskData>} A promise that resolves to the task ID.
    */
   async createTask(params: TaskCreationParams): Promise<TaskData> {
     const tx = await this.taskRegistry.createTask(params.prompt, params.taskType);
