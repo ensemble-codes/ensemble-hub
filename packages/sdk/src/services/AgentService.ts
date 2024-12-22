@@ -3,9 +3,9 @@ import { AgentData } from "../types";
 
 export class AgentService {
   private agentRegistry: ethers.Contract;
-  private signer: ethers.Wallet;
+  private signer: ethers.Signer;
   
-  constructor(agentRegistry: ethers.Contract, signer: ethers.Wallet) {
+  constructor(agentRegistry: ethers.Contract, signer: ethers.Signer) {
     this.agentRegistry = agentRegistry;
     this.signer = signer;
   }

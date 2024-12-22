@@ -13,7 +13,7 @@ export class Ensemble {
   private agentService: AgentService;
   private proposalService: ProposalService;
 
-  constructor(config: ContractConfig, signer: ethers.Wallet) {
+  constructor(config: ContractConfig, signer: ethers.Signer) {
     console.log('Config Params:', {
       network: {
         rpcUrl: config.network.rpcUrl,
