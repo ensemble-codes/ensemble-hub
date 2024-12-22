@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { Ensemble } from "../src"
-import { TaskType } from "../src/types";
+import { Proposal, TaskType } from "../src/types";
 import dotenv from "dotenv";
 
 dotenv.config({ override: true });
@@ -38,21 +38,28 @@ export const setupSdk = () => {
     agentRegistryAddress: agentRegistryAddress
   }
   const sdk = new Ensemble(config, signer);
-  // sdk.start();
+  sdk.start();
   return sdk;
 }
 
 async function main() {
   const ensemble = setupSdk()
 
-  ensemble.setOnNewProposalListener((proposal) => {
+  ensemble.setOnNewProposalListener(async (proposal: Proposal) => {
     console.log("New proposal received:", proposal);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await ensemble.approveProposal(proposal.taskId, proposal);
+    console.log("Proposal approved");
   })
+  
   const task = await ensemble.createTask({
-    prompt: "Create a task",
+    prompt: "Write an exciting tweet about GOAT",
     taskType: TaskType.SIMPLE,
   });
   console.log(task)
+
+  process.stdin.resume();
 }
 
 main().catch((error) => {
