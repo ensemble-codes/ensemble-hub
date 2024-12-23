@@ -8,7 +8,7 @@ import dextools from '@/assets/dextools.svg'
 export const defiAgent: Agent = {
   id: 1,
   name: 'DeFi',
-  avatar: avatar,
+  avatar: avatar.src,
   status: 'active',
   expertise: ['DeFi'],
   category: 'DeFi',

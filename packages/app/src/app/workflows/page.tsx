@@ -12,10 +12,10 @@ export default function Workflows() {
   const [workflows, setWorkflows] = useState<Workflow[]>([])
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | null>(null)
   const [availableAgents, setAvailableAgents] = useState<Agent[]>([
-    { id: 1, name: 'DeFi Analyst', status: 'active', category: 'DeFi', expertise: ['Yield Farming', 'Liquidity Pools'], reputation: 4.5 },
-    { id: 2, name: 'Social Media Manager', status: 'active', category: 'Social', expertise: ['Content Creation', 'Community Management'], reputation: 4.2 },
-    { id: 3, name: 'Data Scientist', status: 'active', category: 'Analysis', expertise: ['Machine Learning', 'Data Visualization'], reputation: 4.8 },
-    { id: 4, name: 'Smart Contract Auditor', status: 'active', category: 'Audit', expertise: ['Solidity', 'Security Analysis'], reputation: 4.9 },
+    { id: 1, name: 'DeFi Analyst', status: 'active', category: 'DeFi', expertise: ['Yield Farming', 'Liquidity Pools'], reputation: 4.5, links: [], avatar: '' },
+    { id: 2, name: 'Social Media Manager', status: 'active', category: 'Social', expertise: ['Content Creation', 'Community Management'], reputation: 4.2, links: [], avatar: '' },
+    { id: 3, name: 'Data Scientist', status: 'active', category: 'Analysis', expertise: ['Machine Learning', 'Data Visualization'], reputation: 4.8, links: [], avatar: '' },
+    { id: 4, name: 'Smart Contract Auditor', status: 'active', category: 'Audit', expertise: ['Solidity', 'Security Analysis'], reputation: 4.9, links: [], avatar: '' },
   ])
   const [selectedAgents, setSelectedAgents] = useState<Agent[]>([])
 
