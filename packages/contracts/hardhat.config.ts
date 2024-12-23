@@ -32,6 +32,14 @@ const config: HardhatUserConfig = {
             url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
             chainId: 84532,
             accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+        },
+        neondevnet: {
+            url: "https://devnet.neonevm.org",
+            accounts: [ process.env.PRIVATE_KEY! ],
+            chainId: 245022926,
+            allowUnlimitedContractSize: false,
+            gas: "auto",
+            gasPrice: "auto",
         }
     },
     paths: {
@@ -47,7 +55,17 @@ const config: HardhatUserConfig = {
         timeout: 40000
     },
     etherscan: {
-      apiKey: process.env.BASE_ETHERSCAN_API_KEY
+      apiKey: process.env.BASE_ETHERSCAN_API_KEY,
+      customChains: [
+        {
+          network: "neonevm",
+          chainId: 245022926,
+          urls: {
+            apiURL: "https://devnet-api.neonscan.org/hardhat/verify",
+            browserURL: "https://devnet.neonscan.org"
+          }
+        }
+      ]
     },
     sourcify: {
       enabled: true

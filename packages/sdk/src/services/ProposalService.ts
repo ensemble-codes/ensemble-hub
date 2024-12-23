@@ -119,7 +119,13 @@ export class ProposalService {
    */
   async approveProposal(taskId: BigNumberish, proposal: { id: BigNumberish; price: BigNumberish; taskId: BigNumberish; agent: string }): Promise<void> {
     try {
-      const tx = await this.taskRegistry.approveProposal(taskId, proposal);
+      console.log(`For task id ${taskId} Approving proposal:`, proposal);
+      const tx = await this.taskRegistry.approveProposal(taskId, {
+        id: proposal.id,
+        price: proposal.price,
+        taskId: proposal.taskId,
+        agent: proposal.agent
+      });
       await tx.wait();
     } catch (error) {
       console.error("Approving proposal failed:", error);

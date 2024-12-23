@@ -40,7 +40,7 @@ export class Ensemble {
       AgentRegistryABI
     );
 
-    this.taskService = new TaskService(taskRegistry, signer);
+    this.taskService = new TaskService(taskRegistry);
     this.agentService = new AgentService(agentRegistry, signer);
     this.proposalService = new ProposalService({
       projectId: 'ensemble-ai-443111',
