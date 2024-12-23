@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { PrivyProvider } from '@privy-io/react-auth'
 import { TaskProposal, Agent, Task } from './types'
 import { usePersistentTasks } from './hooks/usePersistentTasks'
 import Sidebar from './components/Sidebar'
 import Window from './components/Window'
 import Chat from './components/Chat'
 import ChooseAgent from './components/ChooseAgent'
+import { AiProvider } from '@/context/aiContext'
 
 interface ActivityLogEntry {
   id: number
@@ -95,15 +97,21 @@ export default function Home() {
   }
 
   return (
-    <div className='flex'>
-      <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      <Window>
-        {selectedTab === -1 && <Chat setSelectedTab={setSelectedTab} />}
-        {tasks.map((task) => (
-          selectedTab === task.id && <ChooseAgent key={task.id} task={task} />
-        ))}
-      </Window>
-    </div>
+      <PrivyProvider
+        appId='cm4zzth43053ru0vnwr8oxegh'
+      >
+        <AiProvider>
+          <div className='flex'>
+              <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+              <Window>
+                {selectedTab === -1 && <Chat setSelectedTab={setSelectedTab} />}
+                {tasks.map((task) => (
+                  selectedTab === task.id && <ChooseAgent key={task.id} task={task} />
+                ))}
+              </Window>
+          </div>
+        </AiProvider>
+      </PrivyProvider>
   )
 }
 

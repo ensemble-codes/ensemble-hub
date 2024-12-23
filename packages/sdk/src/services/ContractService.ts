@@ -2,9 +2,9 @@ import { ethers } from "ethers";
 
 export class ContractService {
   private provider: ethers.Provider;
-  private signer: ethers.Wallet;
+  private signer: ethers.Signer;
   
-  constructor(provider: ethers.Provider, signer: ethers.Wallet) {
+  constructor(provider: ethers.Provider, signer: ethers.Signer) {
     this.provider = provider;
     this.signer = signer;
   }

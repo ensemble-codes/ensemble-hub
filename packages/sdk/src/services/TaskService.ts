@@ -4,9 +4,9 @@ import { TaskCreationParams, TaskData, TaskStatus } from "../types";
 export class TaskService {
   private taskRegistry: ethers.Contract;
   protected onNewTask: (task: TaskData) => void = () => {};
-  private signer: ethers.Wallet;
+  private signer: ethers.Signer;
 
-  constructor(taskRegistry: ethers.Contract, signer: ethers.Wallet) {
+  constructor(taskRegistry: ethers.Contract, signer: ethers.Signer) {
     this.taskRegistry = taskRegistry;
     this.signer = signer;
   }
