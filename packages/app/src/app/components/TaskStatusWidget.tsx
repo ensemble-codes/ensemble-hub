@@ -34,8 +34,8 @@ export default function TaskStatusWidget({ task, isOpen, onClose }: TaskStatusWi
             <span className="col-span-3">
               <Badge
                 variant={
-                  task.status === 'completed' ? 'success' :
-                  task.status === 'assigned' ? 'warning' :
+                  task.status === 'completed' ? 'default' :
+                  task.status === 'assigned' ? 'outline' :
                   task.status === 'pending' ? 'secondary' : 'destructive'
                 }
               >

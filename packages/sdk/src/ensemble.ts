@@ -23,6 +23,7 @@ export class Ensemble {
       taskRegistryAddress: config.taskRegistryAddress,
       agentRegistryAddress: config.agentRegistryAddress
     });
+
     this.contractService = new ContractService(
       new ethers.JsonRpcProvider(config.network.rpcUrl),
       signer

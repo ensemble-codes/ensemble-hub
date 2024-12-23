@@ -5,6 +5,7 @@ import TaskDialog from './TaskDialog'
 
 interface PromptInterfaceProps {
   onSubmit: (prompt: string, taskType: string) => void
+  initialDescription: string
 }
 
 export default function PromptInterface({ onSubmit, initialDescription }: PromptInterfaceProps) {

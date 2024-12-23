@@ -49,7 +49,8 @@ export default function AgentRegistrationDialog({
         expertise: expertiseList,
         avatar,
         category,
-        reputation
+        reputation,
+        links: []
       })
       setName('')
       setExpertise('')

@@ -1,11 +1,8 @@
-import { Ensemble } from "./src/ensemble";
 import { TaskService } from "./src/services/TaskService";
 import { AgentService } from "./src/services/AgentService";
-import { ProposalService } from "./src/services/ProposalService";
 import { ContractService } from "./src/services/ContractService";
 
-export { Ensemble, TaskService, AgentService, ProposalService, ContractService };
-export default Ensemble;
+export { TaskService, AgentService, ContractService };
 // Re-export commonly used enums and types for convenience
 export type { 
   TaskType,

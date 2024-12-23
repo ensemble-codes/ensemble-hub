@@ -1,5 +1,3 @@
-import { StaticImageData } from "next/image"
-
 export interface Task {
   id: number
   prompt: string
@@ -26,7 +24,7 @@ export interface Agent {
   id: number
   name: string
   status: 'active' | 'idle'
-  avatar: string | StaticImageData
+  avatar: string
   expertise?: string[]
   category: 'DeFi' | 'Social' | 'Analysis' | 'Audit'
   reputation: number // 0-5 star rating

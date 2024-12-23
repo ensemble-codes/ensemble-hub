@@ -4,7 +4,7 @@ import { TaskCreationParams, TaskData, TaskStatus } from "../types";
 export class TaskService {
   private taskRegistry: ethers.Contract;
   protected onNewTask: (task: TaskData) => void = () => {};
-
+  
   constructor(taskRegistry: ethers.Contract) {
     this.taskRegistry = taskRegistry;
   }

@@ -8,14 +8,15 @@ import AgentRegistrationDialog from '../components/AgentRegistrationDialog'
 import AgentCard from '../components/AgentCard'
 
 const initialAgents: Agent[] = [
-  { id: 1, name: 'DeFi Analyst', status: 'active', category: 'DeFi', expertise: ['Yield Farming', 'Liquidity Pools'], reputation: 4.5 },
-  { id: 2, name: 'Social Media Manager', status: 'idle', category: 'Social', expertise: ['Content Creation', 'Community Management'], reputation: 4.2 },
-  { id: 3, name: 'Data Scientist', status: 'active', category: 'Analysis', expertise: ['Machine Learning', 'Data Visualization'], reputation: 4.8 },
-  { id: 4, name: 'Smart Contract Auditor', status: 'active', category: 'Audit', expertise: ['Solidity', 'Security Analysis'], reputation: 4.9 },
-  { id: 5, name: 'Tokenomics Expert', status: 'idle', category: 'DeFi', expertise: ['Token Design', 'Economic Modeling'], reputation: 4.3 },
-  { id: 6, name: 'Sentiment Analyzer', status: 'active', category: 'Social', expertise: ['NLP', 'Trend Analysis'], reputation: 4.1 },
-  { id: 7, name: 'Market Researcher', status: 'active', category: 'Analysis', expertise: ['Competitor Analysis', 'Market Trends'], reputation: 4.6 },
-  { id: 8, name: 'Penetration Tester', status: 'idle', category: 'Audit', expertise: ['Vulnerability Assessment', 'Ethical Hacking'], reputation: 4.7 },
+  { id: 1, name: 'DeFi Analyst', status: 'active', category: 'DeFi', expertise: ['Yield Farming', 'Liquidity Pools'], reputation: 4.5, avatar: '', links: [] },
+  { id: 2, name: 'Social Media Manager', status: 'idle', category: 'Social', expertise: ['Content Creation', 'Community Management'], reputation: 4.2, avatar: '', links: [] },
+  { id: 3, name: 'Data Scientist', status: 'active', category: 'Analysis', expertise: ['Machine Learning', 'Data Visualization'], reputation: 4.8, avatar: '', links: [] },
+  { id: 4, name: 'Smart Contract Auditor', status: 'active', category: 'Audit', expertise: ['Solidity', 'Security Analysis'], reputation: 4.9, avatar: '', links: [] },
+  { id: 5, name: 'Tokenomics Expert', status: 'idle', category: 'DeFi', expertise: ['Token Design', 'Economic Modeling'], reputation: 4., avatar: '', links: [] },
+  { id: 5, name: 'Tokenomics Expert', status: 'idle', category: 'DeFi', expertise: ['Token Design', 'Economic Modeling'], reputation: 4., avatar: '', links: [] },
+  { id: 6, name: 'Sentiment Analyzer', status: 'active', category: 'Social', expertise: ['NLP', 'Trend Analysis'], reputation: 4.1, avatar: '', links: [] },
+  { id: 7, name: 'Market Researcher', status: 'active', category: 'Analysis', expertise: ['Competitor Analysis', 'Market Trends'], reputation: 4.6, avatar: '', links: [] },
+  { id: 8, name: 'Penetration Tester', status: 'idle', category: 'Audit', expertise: ['Vulnerability Assessment', 'Ethical Hacking'], reputation: 4.7, avatar: '', links: [] },
 ]
 
 export default function Agents() {
