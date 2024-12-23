@@ -6,6 +6,9 @@ import { createContext } from "react";
 import { TaskService } from "@ensemble-ai/sdk";
 import { useWallets } from "@privy-io/react-auth";
 import { useMemo } from "react";
+import TaskServiceAbi from '@/constants/abi/taskService.abi.json'
+import { useContext } from "react";
+import { ethers } from "ethers"
 
 const AiContext = createContext({});
 
@@ -22,19 +25,15 @@ export const AiProvider: FC<PropsWithChildren> = ({ children }) => {
         const ethersProvider = await wallet.getEthersProvider();
         const signer = ethersProvider.getSigner();
 
+        const taskServiceContract = new ethers.Contract(
+          '0x9ED3eC1C7D04417B731f606411311368E5EF70EB',
+          TaskServiceAbi,
+        )
+
         setTaskService(
           new TaskService(
-            {
-              agentRegistryAddress:
-                "0x401255453C4a6e66b073bb91cF7B0B5D67FeC81b",
-              taskRegistryAddress: "0x9ED3eC1C7D04417B731f606411311368E5EF70EB",
-              network: {
-                rpcUrl: "https://sepolia.base.org",
-                chainId: 84532,
-                name: "Sepolia",
-              },
-            },
-            signer as any
+            taskServiceContract,
+            signer
           )
         );
       }
@@ -53,3 +52,5 @@ export const AiProvider: FC<PropsWithChildren> = ({ children }) => {
     </AiContext.Provider>
   );
 };
+
+export const useAiContext = () => useContext(AiContext);

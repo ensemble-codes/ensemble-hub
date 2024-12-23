@@ -11,6 +11,7 @@ import loading from '@/assets/loading.svg'
 import checkRed from '@/assets/check-red.svg'
 import microphone from '@/assets/microphone.svg'
 import send from '@/assets/send.svg'
+import { useAiContext } from '@/context/aiContext'
 
 type ChatProps = {
   setSelectedTab: (tab: number) => void
@@ -19,6 +20,11 @@ type ChatProps = {
 export default function Chat({ setSelectedTab }: ChatProps) {
   const [isTaskCreated, setIsTaskCreated] = useState(false)
   const { tasks, addTask } = usePersistentTasks()
+  const { taskService } = useAiContext()
+
+  const submitTask = useCallback(() => {
+    
+  }, [taskService])
 
   useEffect(() => {
       addTask('Swap SOL to USDC worth $500', 'DeFi')
@@ -77,7 +83,7 @@ export default function Chat({ setSelectedTab }: ChatProps) {
             <Image src={microphone} alt="microphone" width={24} height={24} />
           </button>
         </div>
-        <button type='submit' className='bg-primary rounded-lg p-3 hover:opacity-70'>
+        <button type='button' className='bg-primary rounded-lg p-3 hover:opacity-70' onClick={() => submitTask()}>
           <Image src={send} alt="send" width={24} height={24} />
         </button>
       </form>
