@@ -2,7 +2,7 @@ export default function Docs() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Documentation</h1>
-      <p className="mb-4">Welcome to the Ensemble documentation. Here you'll find detailed information about how to use our platform.</p>
+      <p className="mb-4">Welcome to the Ensemble documentation. Here you&apos;ll find detailed information about how to use our platform.</p>
       <div className="space-y-4">
         <section>
           <h2 className="text-2xl font-semibold mb-2">Getting Started</h2>

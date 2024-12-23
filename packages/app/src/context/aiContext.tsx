@@ -33,7 +33,7 @@ export const AiProvider: FC<PropsWithChildren> = ({ children }) => {
         setTaskService(
           new TaskService(
             taskServiceContract,
-            signer
+            signer as unknown as ethers.Signer
           )
         );
       }
