@@ -11,6 +11,7 @@ export type {
   TaskType,
   TaskStatus,
   TaskData,
+  Proposal,
   AgentData,
   Skill,
   TaskCreationParams,
